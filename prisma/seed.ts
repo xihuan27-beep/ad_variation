@@ -442,17 +442,21 @@ const MEDIA_DATA = [
 
       {
         name: 'Naver Brand Search_M_Premium (동영상형)',
-        aliases: ['브랜드검색', '브랜드검색 프리미엄', 'Naver_브랜드검색(프리미엄형_동영상)'],
+        aliases: ['브랜드검색', '브랜드검색 프리미엄', 'Naver_브랜드검색(프리미엄형_동영상)', 'Brand Search_M_Premium'],
         areas: [
-          { displayOrder: 1, areaName: '로고이미지', areaType: AssetAreaType.IMAGE, widthPx: 960, heightPx: 160, maxFileSizeKb: 10240, formats: ['JPG', 'PNG'], specLabel: '가로 80~960px / 세로 88~160px / 10MB 이내', isUserInput: false },
-          { displayOrder: 2, areaName: '브랜딩 배너', areaType: AssetAreaType.IMAGE, widthPx: 786, heightPx: 184, formats: ['JPG', 'PNG'], specLabel: '786 * 184 px', isUserInput: false },
-          { displayOrder: 3, areaName: '동영상 영역 스틸이미지', areaType: AssetAreaType.IMAGE, widthPx: 754, heightPx: 424, formats: ['JPG', 'PNG'], specLabel: '754 * 424 px', isUserInput: false },
-          { displayOrder: 4, areaName: '다이나믹 썸네일 이미지 (3개)', areaType: AssetAreaType.IMAGE, widthPx: 240, heightPx: 240, formats: ['JPG', 'PNG'], specLabel: '240 * 240 px 이상 (비율유지) / 3개 필수', notes: '썸네일 3개 전부 필요', isUserInput: false },
-          // 노란색 행
-          { displayOrder: 5, areaName: '홈링크 슬로건', areaType: AssetAreaType.TEXT, maxChars: 11, specLabel: '모바일 11자 이내', isUserInput: true },
-          { displayOrder: 6, areaName: '브랜드소식 문구', areaType: AssetAreaType.TEXT, maxChars: 18, specLabel: '1~18자 이내', isUserInput: true },
-          { displayOrder: 7, areaName: '다이나믹 썸네일 하단 문구', areaType: AssetAreaType.TEXT, maxChars: 7, specLabel: '1~7자 이내', isUserInput: true },
-          { displayOrder: 8, areaName: '법적 고지문 (과음경고)', areaType: AssetAreaType.TEXT, specLabel: '지정 문구 내에서 선택', isUserInput: true },
+          // ── 파란색 행 ──
+          { displayOrder: 1, areaName: '브랜딩 배너', areaType: AssetAreaType.IMAGE, widthPx: 786, heightPx: 184, maxFileSizeKb: 2048, formats: ['PNG'], isTransparentBg: true, specLabel: '786 * 184 px / 투명 PNG / 2MB 이내', notes: '텍스트 영역 418*96px / 최대 2줄', isUserInput: false },
+          { displayOrder: 2, areaName: "프리뷰 동영상", areaType: AssetAreaType.VIDEO, ratio: '16:9', maxDurationSec: 7, maxFileSizeKb: 1024, formats: ['MP4', 'AVI', 'MOV', 'MKV', 'FLV'], specLabel: '16:9 / 1MB 이하 / 480P 이상 / 5초~6.5초 / MP4, AVI, MOV, MKV, FLV', isUserInput: false },
+          { displayOrder: 3, areaName: '본편 동영상', areaType: AssetAreaType.VIDEO, ratio: '16:9', maxFileSizeKb: 80 * 1024, formats: ['MP4', 'AVI', 'MOV', 'MKV', 'FLV'], specLabel: '16:9 / 80MB 이하 / 480P 이상 / 5초~ / MP4, AVI, MOV, MKV, FLV', isUserInput: false },
+          { displayOrder: 4, areaName: '스틸 이미지', areaType: AssetAreaType.IMAGE, widthPx: 754, heightPx: 424, maxFileSizeKb: 2048, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '754 * 424 px / JPG, JPEG, PNG / 2MB 이내', isUserInput: false },
+          { displayOrder: 5, areaName: '다이나믹 썸네일 (3종)', areaType: AssetAreaType.IMAGE, widthPx: 240, heightPx: 240, maxFileSizeKb: 10240, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '240 * 240 px 이상 (비율유지) / JPG, JPEG, PNG / 10MB 이내', notes: '썸네일 3종 필수', isUserInput: false },
+          // ── 노란색 행 ──
+          { displayOrder: 6, areaName: '홈링크 (랜딩 URL)', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 7, areaName: '브랜드 이벤트 문구 (새소식)', areaType: AssetAreaType.TEXT, maxChars: 18, specLabel: '최대 18자 이내', isUserInput: true },
+          { displayOrder: 8, areaName: '브랜드 이벤트 랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 9, areaName: '다이나믹 썸네일 하단 문구 (3종)', areaType: AssetAreaType.TEXT, maxChars: 7, specLabel: '각 1~7자 이내 / 3종 (팝업스토어, 인스타그램, 카톡선물하기 등)', isUserInput: true },
+          { displayOrder: 10, areaName: '다이나믹 썸네일 랜딩 URL (3종)', areaType: AssetAreaType.URL, specLabel: '3개 각각 URL', isUserInput: true },
+          { displayOrder: 11, areaName: '법적 고지문 (과음경고)', areaType: AssetAreaType.TEXT, specLabel: '지나친 음주는 뇌졸중, 기억력 손상이나 치매를 유발합니다. 임신 중 음주는 기형아 출생 위험을 높입니다.', isUserInput: true },
         ],
       },
     ],
@@ -469,35 +473,48 @@ const MEDIA_DATA = [
         name: 'GFA Main+Sub_Image',
         aliases: ['GFA 이미지', 'GFA Main Sub Image', 'GFA_이미지'],
         areas: [
-          { displayOrder: 1, areaName: '이미지 소재', areaType: AssetAreaType.IMAGE, widthPx: 1250, heightPx: 560, maxFileSizeKb: 250, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1250 * 560 px / 250KB 이하 / JPG, JPEG, PNG / RGB', isUserInput: false },
-          { displayOrder: 2, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 1, areaName: '메인 이미지', areaType: AssetAreaType.IMAGE, widthPx: 1250, heightPx: 560, maxFileSizeKb: 250, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1250 * 560 px / 50KB 이상~250KB 이하 / JPG, JPEG, PNG / RGB', notes: '여백 가이드 준수 필수 / 나눔고딕 또는 고딕계열 폰트 권장', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 * 300 px / JPG, JPEG, PNG / RGB / 200KB 이하', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '광고 안내 문구 (시각장애인용)', areaType: AssetAreaType.TEXT, maxChars: 100, specLabel: '최대 100자', isUserInput: true },
+          { displayOrder: 4, areaName: '행동 유도 문구 (최대 3종, 각 15자)', areaType: AssetAreaType.TEXT, maxChars: 15, specLabel: '각 15자 이내 / 최대 3종', isUserInput: true },
+          { displayOrder: 5, areaName: '행동 유도 URL (최대 3종)', areaType: AssetAreaType.URL, specLabel: '3개 각각 URL', isUserInput: true },
         ],
       },
       {
         name: 'GFA Main+Sub_Video',
         aliases: ['GFA 동영상', 'GFA Main Sub Video', 'GFA_동영상'],
         areas: [
-          { displayOrder: 1, areaName: '동영상 소재', areaType: AssetAreaType.VIDEO, ratio: '16:9', maxFileSizeKb: 1024 * 1024, formats: ['MP4', 'AVI', 'MOV', 'WMV'], specLabel: '16:9 비율 / 최소 너비 600px 이상 / 1GB 이하 / 5초~10분', notes: '최소 너비 600px 이상', isUserInput: false },
-          { displayOrder: 2, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 1, areaName: '동영상 소재', areaType: AssetAreaType.VIDEO, ratio: '16:9', maxFileSizeKb: 1024 * 1024, formats: ['AVI', 'MP4', 'WMV', 'MPG', 'MPEG'], specLabel: '16:9 / 1GB 이하 / 5초~10분 / AVI, MP4, WMV, MPG, MPEG (사운드 필수)', isUserInput: false },
+          { displayOrder: 2, areaName: '정지컷 이미지', areaType: AssetAreaType.IMAGE, widthPx: 1280, heightPx: 720, ratio: '16:9', maxFileSizeKb: 220, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1280 * 720 px (16:9) / 최소 너비 600px 이상 / 220KB 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          { displayOrder: 3, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 * 300 px (1:1) / 130KB 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 4, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 5, areaName: '캠페인 메시지', areaType: AssetAreaType.TEXT, maxChars: 40, specLabel: '최대 2줄 / 40자', isUserInput: true },
+          { displayOrder: 6, areaName: '행동 유도 문구', areaType: AssetAreaType.TEXT, specLabel: null, isUserInput: true },
+          { displayOrder: 7, areaName: '행동 유도 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
         ],
       },
       {
         name: 'GFA Smart Channel',
         aliases: ['스마트채널', 'Smart Channel', 'GFA Smart Channel'],
         areas: [
-          { displayOrder: 1, areaName: '이미지 소재 (160 사이즈)', areaType: AssetAreaType.IMAGE, widthPx: 750, heightPx: 160, maxFileSizeKb: 150, formats: ['PNG'], isTransparentBg: true, specLabel: '750 * 160 px / 최대 150KB / PNG (투명 배경)', notes: '제작용 PSD 샘플 사용하여 제작', isUserInput: false },
-          { displayOrder: 2, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 1, areaName: '이미지 소재 (160 사이즈형)', areaType: AssetAreaType.IMAGE, widthPx: 750, heightPx: 160, maxFileSizeKb: 150, formats: ['PNG'], isTransparentBg: true, specLabel: '750 * 160 px / 최대 150KB / PNG (투명 배경)', notes: '제작용 PSD 샘플 사용. 오브젝트 영역 최대 260*160px. 폰트: 산돌네오고딕/나눔바른고딕만 사용 가능', isUserInput: false },
+          { displayOrder: 2, areaName: '이미지 소재 (200 사이즈형)', areaType: AssetAreaType.IMAGE, widthPx: 750, heightPx: 200, maxFileSizeKb: 150, formats: ['PNG'], isTransparentBg: true, specLabel: '750 * 200 px / 최대 150KB / PNG (투명 배경)', notes: '제작용 PSD 샘플 사용. 폰트 컬러: 메인카피(1행) #222222, 서브카피(2행) #666666', isUserInput: false },
+          { displayOrder: 3, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
         ],
       },
       {
         name: 'GFA FEED_Image',
         aliases: ['GFA 피드 이미지', 'GFA Feed Image'],
         areas: [
-          { displayOrder: 1, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 * 300 px (1:1) / 200kb 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
-          { displayOrder: 2, areaName: '광고 이미지 (1:1)', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 1200, ratio: '1:1', maxFileSizeKb: 80, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1200 * 1200 px (1:1) / 80kb 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
-          { displayOrder: 3, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, specLabel: null, isUserInput: true },
-          { displayOrder: 4, areaName: '광고 문구', areaType: AssetAreaType.TEXT, specLabel: null, isUserInput: true },
-          { displayOrder: 5, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+          { displayOrder: 1, areaName: '광고 이미지', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 628, ratio: '16:9', maxFileSizeKb: 500, formats: ['JPG', 'JPEG', 'PNG'], specLabel: 'W1200 * H628 px (16:9) / 50KB 이상~500KB 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: 'W300 * H300 px (1:1) / 200KB 이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 19, specLabel: '최대 19자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 4, areaName: '광고 문구', areaType: AssetAreaType.TEXT, maxChars: 65, specLabel: '최대 65자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 5, areaName: '행동 유도 버튼', areaType: AssetAreaType.TEXT, specLabel: null, isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
         ],
       },
       {
@@ -581,10 +598,21 @@ const MEDIA_DATA = [
       },
       {
         name: '대리 호출중 배너_동영상형',
-        aliases: ['대리배너', '카카오T 대리'],
+        aliases: ['대리배너', '카카오T 대리', '대리 호출중 배너'],
         areas: [
           { displayOrder: 1, areaName: '영상', areaType: AssetAreaType.VIDEO, widthPx: 1200, heightPx: 600, maxDurationSec: 6, maxFileSizeKb: 6 * 1024, formats: ['MP4'], specLabel: '1200 x 600 px / mp4 / 6mb 이하 / h.264 / 29.97fps / 6초 / 음소거', isUserInput: false },
           { displayOrder: 2, areaName: '배경 색상값', areaType: AssetAreaType.COLOR, specLabel: 'HEX 코드 (화이트 #FFFFFF 불가)', isUserInput: true },
+        ],
+      },
+      {
+        name: '대리 핀테마',
+        aliases: ['대리핀테마', '카카오T 대리핀테마', '대리 핀'],
+        areas: [
+          { displayOrder: 1, areaName: '승객핀', areaType: AssetAreaType.IMAGE, widthPx: 120, heightPx: 120, maxFileSizeKb: 20, formats: ['PNG'], isTransparentBg: true, specLabel: '120 × 120 px / 투명 PNG / 20kb 이하', isUserInput: false },
+          { displayOrder: 2, areaName: '기사핀', areaType: AssetAreaType.IMAGE, widthPx: 120, heightPx: 120, maxFileSizeKb: 20, formats: ['PNG'], isTransparentBg: true, specLabel: '120 × 120 px / 투명 PNG / 20kb 이하', isUserInput: false },
+          { displayOrder: 3, areaName: '배너 이미지 (오브젝트 우측형)', areaType: AssetAreaType.IMAGE, widthPx: 1029, heightPx: 258, maxFileSizeKb: 300, formats: ['PNG'], isTransparentBg: true, specLabel: '1029 × 258 px / 투명 PNG / 300kb 이하', isUserInput: false },
+          { displayOrder: 4, areaName: '배너 배경 색상값', areaType: AssetAreaType.COLOR, specLabel: 'HEX 코드 (화이트 #FFFFFF 불가)', isUserInput: true },
+          { displayOrder: 5, areaName: '배너 랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
         ],
       },
     ],
