@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import type { ExcelRow } from './types';
+import type { ExcelRow, SpecDetail } from './types';
 
 const MEDIA_KEYWORDS = ['매체', '매체명', 'media', '채널'];
 const PRODUCT_KEYWORDS = ['상품', '상품명', '지면', 'product', '소재'];
@@ -17,8 +17,8 @@ function findColumn(headers: string[], keywords: string[]): number {
   return headers.findIndex((h) => keywords.some((k) => normalizeHeader(h).includes(k.toLowerCase())));
 }
 
-function extractSpecsFromText(text: string): Partial<ExcelRow['extractedSpecs']> {
-  const specs: Partial<NonNullable<ExcelRow['extractedSpecs']>> = {};
+function extractSpecsFromText(text: string): Partial<SpecDetail> {
+  const specs: Partial<SpecDetail> = {};
 
   const resMatch = text.match(/(\d{3,4})\s*[xX×]\s*(\d{3,4})/);
   if (resMatch) specs.resolution = `${resMatch[1]}x${resMatch[2]}`;
