@@ -1332,6 +1332,27 @@ const MEDIA_DATA = [
       },
     ],
   },
+
+  // ═══════════════════════════════════════════════════
+  // NAVER WEBTOON
+  // ═══════════════════════════════════════════════════
+  {
+    mediaName: 'Naver Webtoon',
+    mediaAliases: ['네이버웹툰', 'NaverWebtoon', '네이버 웹툰', 'Webtoon'],
+    products: [
+      {
+        name: 'Webtoon_BigBanner (PC/Mobile 빅배너)',
+        aliases: ['웹툰 빅배너', 'Webtoon Big Banner', '네이버웹툰 빅배너', 'Webtoon BigBanner'],
+        areas: [
+          { displayOrder: 1, areaName: '빅배너 이미지 (1200×1200)', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 1200, ratio: '1:1', maxFileSizeKb: 800, formats: ['JPG', 'PNG'], specLabel: '1200 × 1200 px (1:1) / 최저 80KB 이상, 800KB 미만 / JPG, PNG / PC 600×600·MW/APP 가로 풀 자동 리사이징 / 광고와 조화로운 배경 필수 / 그라데이션 배경은 투톤으로만 구성', isUserInput: false },
+          { displayOrder: 2, areaName: '광고주 브랜드 로고', areaType: AssetAreaType.IMAGE, specLabel: '이미지 내 삽입 (권장)', isUserInput: true },
+          { displayOrder: 3, areaName: '광고 타이틀/서브카피', areaType: AssetAreaType.TEXT, specLabel: '타이틀 최소 32pt / 서브카피 최소 16pt / 심의필 14pt / 폰트 2가지 이내 (예: Rix고딕, DIN) / 텍스트 기본 1종+포인트 2종 이내', isUserInput: true },
+          { displayOrder: 4, areaName: '버튼 (클릭 유도)', areaType: AssetAreaType.TEXT, specLabel: '클릭 유도 버튼 텍스트 (권장)', isUserInput: true },
+          { displayOrder: 5, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+    ],
+  },
 ];
 
 // ─────────────────────────────────────────────
