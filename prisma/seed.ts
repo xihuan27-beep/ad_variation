@@ -532,6 +532,215 @@ const MEDIA_DATA = [
   },
 
   // ═══════════════════════════════════════════════════
+  // NAVER 성과형 네이티브 (M통합 / PC 성과형)
+  // ═══════════════════════════════════════════════════
+  {
+    mediaName: 'Naver 성과형 네이티브',
+    mediaAliases: ['네이버 성과형 네이티브', 'Naver Native DA', '네이버 네이티브', 'M통합 네이티브', 'PC 성과형 네이티브'],
+    products: [
+      {
+        name: 'M통합 네이티브 DA',
+        aliases: ['M네이티브', 'M통합네이티브', '모바일 네이티브 DA', 'M Native DA'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['PNG', 'JPG', 'JPEG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / PNG-24, JPG, JPEG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자 / 띄어쓰기 포함 (쌍따옴표·따옴표 사용 불가)', isUserInput: true },
+          { displayOrder: 5, areaName: '서브 카피 (설명문구 3줄)', areaType: AssetAreaType.TEXT, maxChars: 36, specLabel: '3줄 / 줄당 최대 12자 / 총 36자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1: 더 알아보기 / 지금 예약하기 / 문의하기 / 다운로드 / 지금 구매하기 / 가입하기 / 동영상 더보기 / 지금 신청하기 / 쿠폰 받기 / 지금 렌탈하기 / 지금 구경하기 / 계좌 개설하기 / 내보험료 확인 / 견적 요청하기 / 버튼 없음', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자 (금융·제약·건강기능식품 업종 필수)', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: '네이버 퍼포먼스 네트워크 (M)',
+        aliases: ['퍼포먼스 네트워크', 'Naver Performance Network', '네이버 PF 네트워크', 'Naver PF Network'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['PNG', 'JPG', 'JPEG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / PNG-24, JPG, JPEG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자 / 띄어쓰기 포함', isUserInput: true },
+          { displayOrder: 5, areaName: '서브 카피 (설명문구)', areaType: AssetAreaType.TEXT, maxChars: 12, specLabel: '1줄 / 최대 12자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1: 더 알아보기 / 지금 예약하기 / 문의하기 / 다운로드 / 지금 구매하기 / 가입하기 / 동영상 더보기 / 지금 신청하기 / 쿠폰 받기 / 지금 렌탈하기 / 지금 구경하기 / 계좌 개설하기 / 내보험료 확인 / 견적 요청하기 / 버튼 없음', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자 (금융·제약·건강기능식품 업종 필수)', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 네이티브 검색창하단',
+        aliases: ['PC 검색창하단', 'PC Native 검색창하단', 'PC 네이티브 검색창'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자 / 띄어쓰기 포함', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 네이티브 로그인창하단',
+        aliases: ['PC 로그인창하단', 'PC Native 로그인창하단', 'PC 로그인 네이티브'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 주제판 네이티브 가로타입',
+        aliases: ['PC 주제판 가로', 'PC Native 주제판 가로', '주제판 가로타입'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 주제판 네이티브 세로타입',
+        aliases: ['PC 주제판 세로', 'PC Native 주제판 세로', '주제판 세로타입'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', notes: '랜딩 버튼 없음 (세로타입 특성)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 6, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 네이티브 베이직타입',
+        aliases: ['PC 베이직타입', 'PC Native 베이직', 'PC 네이티브 기본형'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'PC 네이티브 기사 본문하단',
+        aliases: ['PC 기사 본문하단', 'PC Native 기사본문하단', '기사 본문하단 네이티브'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', notes: '기사 본문하단은 프로필 이미지 용량 기준 상이 (200KB 아닌 130KB)', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 1 (PC배너형 긴 설명문구1)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1)', isUserInput: true },
+          { displayOrder: 5, areaName: '서브 카피 2 (PC배너형 긴 설명문구2)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구2)', isUserInput: true },
+          { displayOrder: 6, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 8, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 9, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: '사이드박스',
+        aliases: ['사이드박스 DA', 'Sidebar DA', 'PC 사이드박스', 'Sidebox'],
+        areas: [
+          { displayOrder: 1, areaName: '썸네일 이미지', areaType: AssetAreaType.IMAGE, widthPx: 342, heightPx: 228, ratio: '1.5:1', maxFileSizeKb: 130, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '342 × 228 px (1.5:1) / 10KB이상~130KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG', isUserInput: false },
+          { displayOrder: 3, areaName: '메인 카피', areaType: AssetAreaType.TEXT, maxChars: 20, specLabel: '최대 20자', isUserInput: true },
+          { displayOrder: 4, areaName: '서브 카피 (PC배너형 긴 설명문구)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '최대 28자 (PC배너형 긴 설명문구1 노출)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고주명', areaType: AssetAreaType.TEXT, maxChars: 14, specLabel: '최대 14자', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 버튼', areaType: AssetAreaType.TEXT, specLabel: '15종 중 택1', isUserInput: true },
+          { displayOrder: 7, areaName: '고지문구', areaType: AssetAreaType.TEXT, maxChars: 45, specLabel: '최대 45자', isUserInput: true },
+          { displayOrder: 8, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════
+  // NAVER M 피드 광고
+  // ═══════════════════════════════════════════════════
+  {
+    mediaName: 'Naver M 피드 광고',
+    mediaAliases: ['네이버 피드', 'Naver Feed', 'M 피드', '네이버 M 피드', 'Naver M Feed'],
+    products: [
+      {
+        name: 'M 피드 광고 이미지형',
+        aliases: ['피드 이미지형', 'Feed Image', 'M Feed Image', '피드광고 이미지'],
+        areas: [
+          { displayOrder: 1, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          { displayOrder: 2, areaName: '광고 이미지 (1:1)', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 1200, ratio: '1:1', maxFileSizeKb: 800, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1200 × 1200 px (1:1) / 80KB이상~800KB이하 / JPG, JPEG, PNG (RGB)', notes: '1:1 또는 16:9 비율 중 선택', isUserInput: false },
+          { displayOrder: 3, areaName: '광고 이미지 (16:9)', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 628, ratio: '16:9', maxFileSizeKb: 500, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1200 × 628 px (16:9) / 50KB이상~500KB이하 / JPG, JPEG, PNG (RGB)', notes: '1:1 또는 16:9 비율 중 선택', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 4, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 19, specLabel: '최대 19글자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고 문구', areaType: AssetAreaType.TEXT, maxChars: 65, specLabel: '최대 65글자 (2줄 노출) / 소재 유형·게재 위치에 따라 일부 말줄임 가능', isUserInput: true },
+          { displayOrder: 6, areaName: '행동 유도 버튼', areaType: AssetAreaType.TEXT, specLabel: '더 알아보기 등 레이블 선택 / 버튼없음 선택 시 미노출', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'M 피드 광고 동영상형',
+        aliases: ['피드 동영상형', 'Feed Video', 'M Feed Video', '피드광고 동영상'],
+        areas: [
+          { displayOrder: 1, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          { displayOrder: 2, areaName: '광고 동영상', areaType: AssetAreaType.VIDEO, ratio: '1:1 또는 16:9', maxFileSizeKb: 1024 * 1024, formats: ['MP4', 'AVI', 'MOV', 'WMV'], specLabel: '최소 너비 600px이상 / 5초이상~최대 10분 (15~30초 권장) / 1:1 또는 16:9 / 1GB이하 / MP4, AVI, MOV, WMV', isUserInput: false },
+          { displayOrder: 3, areaName: '스틸컷 이미지', areaType: AssetAreaType.IMAGE, ratio: '동영상과 동일 비율', maxFileSizeKb: 800, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '동영상과 동일 비율 (1:1 또는 16:9) / 800KB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 4, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 19, specLabel: '최대 19글자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 5, areaName: '광고 문구', areaType: AssetAreaType.TEXT, maxChars: 65, specLabel: '최대 65글자 (2줄 노출)', isUserInput: true },
+          { displayOrder: 6, areaName: '행동 유도 버튼', areaType: AssetAreaType.TEXT, specLabel: '더 알아보기 등 레이블 선택', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'M 피드 광고 컬렉션형',
+        aliases: ['피드 컬렉션형', 'Feed Collection', 'M Feed Collection', '피드광고 컬렉션'],
+        areas: [
+          // 공통 등록 소재 (파란색)
+          { displayOrder: 1, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          // 상품별 등록 소재 (파란색)
+          { displayOrder: 2, areaName: '광고 이미지 (상품별, 4~10장)', areaType: AssetAreaType.IMAGE, widthPx: 600, heightPx: 600, ratio: '1:1', maxFileSizeKb: 500, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '600 × 600 px (1:1) / 20KB이상~500KB이하 / JPG, JPEG, PNG (RGB) / 최소 4장~최대 10장 등록', isUserInput: false },
+          { displayOrder: 3, areaName: '광고 동영상 (상품별, 선택)', areaType: AssetAreaType.VIDEO, ratio: '1:1', maxFileSizeKb: 1024 * 1024, formats: ['MP4', 'AVI', 'MOV', 'WMV'], specLabel: '최소 너비 600px이상 / 5초이상~최대 10분 (15~30초 권장) / 1:1 / 1GB이하 / MP4, AVI, MOV, WMV', notes: '이미지 또는 동영상 선택', isUserInput: false },
+          { displayOrder: 4, areaName: '스틸컷 이미지 (동영상용)', areaType: AssetAreaType.IMAGE, ratio: '1:1', maxFileSizeKb: 500, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '최소 너비 600px (1:1) / 500KB이하 / JPG, JPEG, PNG (RGB)', notes: '동영상 사용 시 필수', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 5, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 19, specLabel: '최대 19글자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 6, areaName: '광고 문구', areaType: AssetAreaType.TEXT, maxChars: 65, specLabel: '최대 65글자', isUserInput: true },
+          { displayOrder: 7, areaName: '상품 설명 문구 (상품별)', areaType: AssetAreaType.TEXT, maxChars: 28, specLabel: '상품별 최대 28글자', isUserInput: true },
+          { displayOrder: 8, areaName: '상품 랜딩 URL (상품별)', areaType: AssetAreaType.URL, specLabel: '상품 클릭 시 랜딩 URL (상품별)', isUserInput: true },
+          { displayOrder: 9, areaName: '행동 유도 버튼', areaType: AssetAreaType.TEXT, specLabel: '더 알아보기 등 레이블 선택', isUserInput: true },
+          { displayOrder: 10, areaName: '스토어 랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'M 피드 광고 2:3 이미지형',
+        aliases: ['피드 2:3 이미지형', 'Feed 2:3 Image', 'M Feed 2:3', '피드 세로형'],
+        areas: [
+          { displayOrder: 1, areaName: '프로필 이미지', areaType: AssetAreaType.IMAGE, widthPx: 300, heightPx: 300, ratio: '1:1', maxFileSizeKb: 200, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '300 × 300 px (1:1) / 200KB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          { displayOrder: 2, areaName: '광고 이미지 (2:3)', areaType: AssetAreaType.IMAGE, widthPx: 1200, heightPx: 1800, ratio: '2:3', maxFileSizeKb: 1229, formats: ['JPG', 'JPEG', 'PNG'], specLabel: '1200 × 1800 px (2:3) / 100KB이상~1.2MB이하 / JPG, JPEG, PNG (RGB)', isUserInput: false },
+          // 노란색 행
+          { displayOrder: 3, areaName: '프로필 이름', areaType: AssetAreaType.TEXT, maxChars: 19, specLabel: '최대 19글자 (띄어쓰기 포함)', isUserInput: true },
+          { displayOrder: 4, areaName: '광고 문구', areaType: AssetAreaType.TEXT, maxChars: 65, specLabel: '최대 65글자', isUserInput: true },
+          { displayOrder: 5, areaName: '행동 유도 버튼', areaType: AssetAreaType.TEXT, specLabel: '더 알아보기 등 레이블 선택', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: AssetAreaType.URL, specLabel: null, isUserInput: true },
+        ],
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════
   // KAKAO MOBILITY
   // ═══════════════════════════════════════════════════
   {
