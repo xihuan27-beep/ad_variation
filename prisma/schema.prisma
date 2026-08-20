@@ -1,0 +1,198 @@
+// AdSpec DB Schema
+// 목적: 매체 기획 엑셀 → 소재 제작 요청서 PPT 자동 생성
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// 1. 매체 + 상품 마스터 (파란색 행의 원천)
+// ─────────────────────────────────────────────
+
+// 매체 (네이버, 카카오, 메타 등)
+model Media {
+  id       String  @id @default(cuid())
+  name     String  @unique // "Naver NOSP", "Kakao Mobility"
+  aliases  String[]        // ["네이버", "NAVER NOSP"] — 엑셀 퍼지 매칭용
+
+  products MediaProduct[]
+}
+
+// 상품 (Double Crown, Special DA, Timeboard 등)
+model MediaProduct {
+  id          String  @id @default(cuid())
+  media       Media   @relation(fields: [mediaId], references: [id])
+  mediaId     String
+  name        String  // "Double Crown", "Special DA_Exp_Video(520)"
+  aliases     String[] // 엑셀에 쓰인 약어들
+
+  assetAreas  AssetArea[]
+  placements  CampaignPlacement[]
+
+  @@unique([mediaId, name])
+}
+
+// 소재 영역 (상품 하나에 여러 영역이 있음)
+// Double Crown = [9:16 메인 동영상, 9:16 정지컷 이미지, 광고주 로고, 메인 텍스트, 서브 텍스트, 랜딩 URL]
+model AssetArea {
+  id           String       @id @default(cuid())
+  product      MediaProduct @relation(fields: [productId], references: [id])
+  productId    String
+  displayOrder Int          // 슬라이드 표 안에서 순서
+
+  // 영역 이름 & 분류
+  areaName     String  // "9:16 메인 동영상", "광고주 로고", "메인 텍스트 (버튼용)"
+  areaType     AssetAreaType // IMAGE | VIDEO | TEXT | URL | COLOR
+
+  // ── 파란색 행 데이터 (마스터 스펙) ──────────────
+  widthPx      Int?    // 828
+  heightPx     Int?    // 1472
+  ratio        String? // "9:16", "1:1", "16:9"
+  maxFileSizeKb Int?   // 300
+  formats      String[] // ["MP4", "MOV", "AVI"]
+  maxDurationSec Int?  // 6 (최대 6초)
+  maxChars     Int?    // 텍스트 영역의 최대 글자 수 (14, 21 등)
+  isTransparentBg Boolean @default(false) // 투명 PNG 필요 여부
+  needsDarkMode   Boolean @default(false) // 라이트+다크 2벌 필요 여부
+
+  // 표에 보여줄 최종 라벨 (자동 조합 또는 직접 입력)
+  // 예: "828 * 1472 px (최대 6초) / MP4, MOV, AVI"
+  specLabel    String?
+
+  // 텍스트/URL/컬러 영역이면 PPT 표에서 노란색 행으로 표시
+  isUserInput  Boolean @default(false)
+
+  notes        String? // 특이사항
+
+  inputs       PlacementInput[]
+  instructions PlacementInstruction[]
+  histories    AssetAreaHistory[]
+}
+
+enum AssetAreaType {
+  IMAGE
+  VIDEO
+  TEXT
+  URL
+  COLOR
+}
+
+// 스펙 변경 이력
+model AssetAreaHistory {
+  id          String    @id @default(cuid())
+  area        AssetArea @relation(fields: [areaId], references: [id])
+  areaId      String
+  changedAt   DateTime  @default(now())
+  changedBy   String    // 변경자
+  source      String    // "excel" | "admin"
+  fieldName   String    // 어떤 필드가 바뀌었는지
+  oldValue    String
+  newValue    String
+}
+
+// ─────────────────────────────────────────────
+// 2. 캠페인 (매체팀 엑셀 1개 = 캠페인 1개)
+// ─────────────────────────────────────────────
+
+model Campaign {
+  id        String   @id @default(cuid())
+  name      String   // "JW Blue FY27 Q1 Campaign Blue Popup"
+  client    String   // "디아지오코리아"
+  brand     String   // "조니워커 블루"
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  placements    CampaignPlacement[]
+  sharedAssets  CampaignSharedAsset[] // 캠페인 전체에 공통으로 쓰이는 값
+  pptExports    PptExport[]
+}
+
+// 캠페인 공통 자산 (모든 슬라이드에 반복 사용)
+// 예: 브랜드 컬러 #091C48, 랜딩 URL, 과음경고문구, 브랜드명
+model CampaignSharedAsset {
+  id         String   @id @default(cuid())
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+  assetType  String   // "brand_color" | "landing_url" | "disclosure" | "brand_name" | "logo_note"
+  label      String   // "브랜드 컬러", "랜딩 URL", "과음경고문구"
+  value      String   // "#091C48", "https://booking.naver.com/..."
+}
+
+// ─────────────────────────────────────────────
+// 3. 집행 (캠페인에서 실제 집행하는 매체+상품 1줄)
+// ─────────────────────────────────────────────
+
+model CampaignPlacement {
+  id         String       @id @default(cuid())
+  campaign   Campaign     @relation(fields: [campaignId], references: [id])
+  campaignId String
+  product    MediaProduct @relation(fields: [productId], references: [id])
+  productId  String
+  seqNo      Int          // 제작가이드 시트의 No.
+
+  liveDate   String?  // "8/21 19:00-21:00"
+  deadline   String?  // "광고 라이브 최소 5영업일 전", "D-3"
+  notes      String?  // 비고 (소재 롤링 개수 제한 없음 등)
+
+  createdAt  DateTime @default(now())
+
+  // 노란색 행 데이터 (캠페인별 카피, URL, 컬러)
+  inputs       PlacementInput[]
+  // 하단 작업 지시 섹션
+  instructions PlacementInstruction[]
+}
+
+// 노란색 행 — 캠페인마다 달라지는 카피/URL/컬러
+// 예: 메인 텍스트 → "조니워커 블루로드 OPEN"
+//     랜딩 URL → "https://booking.naver.com/..."
+model PlacementInput {
+  id          String            @id @default(cuid())
+  placement   CampaignPlacement @relation(fields: [placementId], references: [id])
+  placementId String
+  area        AssetArea         @relation(fields: [areaId], references: [id])
+  areaId      String            // 어떤 영역에 대한 입력인지
+
+  value       String  // 실제 입력값
+}
+
+// 하단 작업 지시 섹션
+// 소재 영역별로 "어떤 소스를 어떻게 쓸지" + "신규/수정/변경없음"
+model PlacementInstruction {
+  id            String            @id @default(cuid())
+  placement     CampaignPlacement @relation(fields: [placementId], references: [id])
+  placementId   String
+  area          AssetArea         @relation(fields: [areaId], references: [id])
+  areaId        String
+
+  changeType    ChangeType // 신규제작 | 문구만수정 | 이미지변경 | 변경없음
+  sourceMaterial String?  // "변우석 30초 영상 소스"
+  sourceDetail   String?  // "0:18~0:24 구간 활용"
+  workNote       String?  // "'킵워킹 우석' 폰트 노출 타이밍 앞당겨서 편집"
+}
+
+enum ChangeType {
+  NEW           // 신규 제작
+  TEXT_ONLY     // 이미지/영상 변경 없이 문구만 수정
+  ASSET_CHANGE  // 이미지/영상 변경
+  NO_CHANGE     // 변경 없음
+}
+
+// ─────────────────────────────────────────────
+// 4. PPT 생성 이력
+// ─────────────────────────────────────────────
+
+model PptExport {
+  id         String   @id @default(cuid())
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String
+  createdAt  DateTime @default(now())
+  createdBy  String?
+  fileUrl    String?  // 생성된 PPT 파일 경로/URL
+}
