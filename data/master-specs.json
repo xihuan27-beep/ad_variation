@@ -1,0 +1,247 @@
+[
+  {
+    "id": "naver-gda-banner",
+    "mediaName": "네이버",
+    "productName": "GDA 배너",
+    "aliases": ["네이버 GDA", "NAVER GDA", "naver gda", "GDA", "네이버배너", "네이버 디스플레이"],
+    "specs": {
+      "resolution": "1200x628",
+      "fileSize": "200KB",
+      "format": ["JPG", "PNG", "GIF"],
+      "ratio": "1.91:1",
+      "safeArea": "안전 영역 내 핵심 요소 배치",
+      "additionalNotes": "GIF 최대 10초, 3회 반복 제한"
+    },
+    "guidelineUrl": "https://naver-business.com/guide",
+    "lastUpdated": "2025-03-01"
+  },
+  {
+    "id": "naver-brand-search",
+    "mediaName": "네이버",
+    "productName": "브랜드검색",
+    "aliases": ["브랜드 검색", "네이버 브랜드검색", "brand search", "NAVER 브랜드검색"],
+    "specs": {
+      "resolution": "이미지 800x400 (대표), 800x800 (서브)",
+      "fileSize": "500KB",
+      "format": ["JPG", "PNG"],
+      "textLength": {
+        "title": 25,
+        "description": 45
+      },
+      "additionalNotes": "이미지 최대 6장, 동영상 포함 시 15초 이내"
+    },
+    "lastUpdated": "2025-03-01"
+  },
+  {
+    "id": "naver-powerlink",
+    "mediaName": "네이버",
+    "productName": "파워링크",
+    "aliases": ["파워 링크", "네이버 파워링크", "powerlink", "검색광고"],
+    "specs": {
+      "textLength": {
+        "title": 15,
+        "description": 45
+      },
+      "additionalNotes": "제목 15자, 설명문 1·2 각 45자 이내"
+    },
+    "lastUpdated": "2025-01-01"
+  },
+  {
+    "id": "naver-shopping",
+    "mediaName": "네이버",
+    "productName": "쇼핑 검색광고",
+    "aliases": ["네이버쇼핑", "쇼핑검색", "네이버 쇼핑검색"],
+    "specs": {
+      "resolution": "1000x1000",
+      "fileSize": "1MB",
+      "format": ["JPG", "PNG"],
+      "ratio": "1:1",
+      "additionalNotes": "상품 이미지 기준, 화이트 배경 권장"
+    },
+    "lastUpdated": "2025-01-01"
+  },
+  {
+    "id": "kakao-display",
+    "mediaName": "카카오",
+    "productName": "카카오 디스플레이",
+    "aliases": ["카카오디스플레이", "kakao display", "카카오 DA", "kakao DA"],
+    "specs": {
+      "resolution": "1044x320",
+      "fileSize": "500KB",
+      "format": ["JPG", "PNG", "GIF"],
+      "safeArea": "좌우 26px 안전영역 확보",
+      "additionalNotes": "GIF 재생 시간 15초 이내, 10FPS 이하"
+    },
+    "guidelineUrl": "https://kakaobusiness.gitbook.io",
+    "lastUpdated": "2025-04-01"
+  },
+  {
+    "id": "kakao-bizboard",
+    "mediaName": "카카오",
+    "productName": "카카오비즈보드",
+    "aliases": ["비즈보드", "bizboard", "카카오 비즈보드", "카톡 비즈보드"],
+    "specs": {
+      "resolution": "1029x258 (일반형) / 1029x258 (풀뷰형)",
+      "fileSize": "200KB",
+      "format": ["JPG", "PNG"],
+      "textLength": {
+        "title": 25,
+        "description": 28
+      },
+      "additionalNotes": "풀뷰 배너 728x1456 추가 제출"
+    },
+    "lastUpdated": "2025-04-01"
+  },
+  {
+    "id": "kakao-moment-feed",
+    "mediaName": "카카오",
+    "productName": "카카오모먼트 피드",
+    "aliases": ["카카오 모먼트", "카모 피드", "kakao moment", "모먼트 피드"],
+    "specs": {
+      "resolution": "800x800 (1:1) / 800x400 (2:1)",
+      "fileSize": "2MB",
+      "format": ["JPG", "PNG"],
+      "ratio": "1:1 또는 2:1",
+      "textLength": {
+        "title": 25,
+        "description": 60
+      }
+    },
+    "lastUpdated": "2025-02-01"
+  },
+  {
+    "id": "google-gdn",
+    "mediaName": "구글",
+    "productName": "GDN 디스플레이",
+    "aliases": ["GDN", "구글 GDN", "google display", "구글디스플레이", "Google GDN"],
+    "specs": {
+      "resolution": "300x250, 728x90, 320x50, 160x600, 300x600, 970x250",
+      "fileSize": "150KB",
+      "format": ["JPG", "PNG", "GIF", "HTML5"],
+      "additionalNotes": "애니메이션 최대 30초, HTML5 zip 제출"
+    },
+    "lastUpdated": "2025-01-01"
+  },
+  {
+    "id": "youtube-bumper",
+    "mediaName": "유튜브",
+    "productName": "범퍼 광고",
+    "aliases": ["유튜브범퍼", "youtube bumper", "범퍼", "bumper ad", "유튜브 범퍼"],
+    "specs": {
+      "resolution": "1920x1080",
+      "fileSize": "무제한 (업로드 후 처리)",
+      "format": ["MP4", "MOV", "AVI"],
+      "duration": "6초",
+      "ratio": "16:9",
+      "additionalNotes": "스킵 불가, 6초 내 핵심 메시지 전달 필수"
+    },
+    "lastUpdated": "2025-01-01"
+  },
+  {
+    "id": "youtube-trueview",
+    "mediaName": "유튜브",
+    "productName": "트루뷰 인스트림",
+    "aliases": ["트루뷰", "trueview", "youtube instream", "인스트림", "유튜브 트루뷰", "유튜브인스트림"],
+    "specs": {
+      "resolution": "1920x1080",
+      "fileSize": "무제한 (업로드 후 처리)",
+      "format": ["MP4", "MOV"],
+      "duration": "15초 이상 (5초 후 스킵 가능)",
+      "ratio": "16:9",
+      "additionalNotes": "CTA 오버레이 설정 권장, 30초 이상 권장"
+    },
+    "lastUpdated": "2025-01-01"
+  },
+  {
+    "id": "meta-feed-image",
+    "mediaName": "메타",
+    "productName": "피드 이미지",
+    "aliases": ["메타 피드", "페이스북 피드", "FB 피드", "Meta Feed", "페북피드", "메타피드"],
+    "specs": {
+      "resolution": "1200x628 (1.91:1) 또는 1080x1080 (1:1)",
+      "fileSize": "30MB",
+      "format": ["JPG", "PNG"],
+      "ratio": "1.91:1 또는 1:1",
+      "additionalNotes": "텍스트 20% 이하 권장, 최소 600x315"
+    },
+    "lastUpdated": "2025-03-01"
+  },
+  {
+    "id": "meta-story",
+    "mediaName": "메타",
+    "productName": "스토리",
+    "aliases": ["메타 스토리", "페이스북 스토리", "인스타 스토리", "instagram story", "Meta Story"],
+    "specs": {
+      "resolution": "1080x1920",
+      "fileSize": "30MB",
+      "format": ["JPG", "PNG", "MP4", "MOV"],
+      "duration": "이미지 5초, 영상 최대 15초",
+      "ratio": "9:16",
+      "safeArea": "상하 250px 안전영역 (텍스트/로고 배치 금지)",
+      "additionalNotes": "상하 14% 안전영역 준수 필수"
+    },
+    "lastUpdated": "2025-03-01"
+  },
+  {
+    "id": "meta-reels",
+    "mediaName": "메타",
+    "productName": "릴스",
+    "aliases": ["메타 릴스", "instagram reels", "인스타 릴스", "reels", "릴스광고"],
+    "specs": {
+      "resolution": "1080x1920",
+      "fileSize": "4GB",
+      "format": ["MP4", "MOV"],
+      "duration": "최대 60초 (15초 권장)",
+      "ratio": "9:16",
+      "safeArea": "상하 35% 안전영역",
+      "additionalNotes": "오디오 포함 권장, 세로형 필수"
+    },
+    "lastUpdated": "2025-06-01"
+  },
+  {
+    "id": "tiktok-infeed",
+    "mediaName": "틱톡",
+    "productName": "인피드 광고",
+    "aliases": ["틱톡", "TikTok", "tiktok infeed", "틱톡 인피드", "틱톡광고"],
+    "specs": {
+      "resolution": "1080x1920",
+      "fileSize": "500MB",
+      "format": ["MP4", "MOV", "AVI"],
+      "duration": "9~60초 (15초 권장)",
+      "ratio": "9:16",
+      "safeArea": "좌하단 UI 영역(390px) 핵심 요소 배치 금지",
+      "textLength": {
+        "description": 100
+      },
+      "additionalNotes": "사운드 필수, 밝기·선명도 높을수록 성과 우수"
+    },
+    "lastUpdated": "2025-05-01"
+  },
+  {
+    "id": "daum-da",
+    "mediaName": "다음",
+    "productName": "다음 DA",
+    "aliases": ["다음", "Daum", "다음 디스플레이", "카카오 다음"],
+    "specs": {
+      "resolution": "1200x300 (PC), 720x200 (MO)",
+      "fileSize": "200KB",
+      "format": ["JPG", "PNG", "GIF"],
+      "additionalNotes": "GIF 재생 5회 반복 제한"
+    },
+    "lastUpdated": "2025-02-01"
+  },
+  {
+    "id": "coupang-cpc",
+    "mediaName": "쿠팡",
+    "productName": "쿠팡 CPC",
+    "aliases": ["쿠팡광고", "coupang", "쿠팡 검색광고", "쿠팡CPC"],
+    "specs": {
+      "resolution": "500x500",
+      "fileSize": "1MB",
+      "format": ["JPG", "PNG"],
+      "ratio": "1:1",
+      "additionalNotes": "상품 이미지 단독, 텍스트 오버레이 금지"
+    },
+    "lastUpdated": "2025-01-01"
+  }
+]
