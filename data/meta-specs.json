@@ -631,6 +631,45 @@
   },
   {
     "format": "image",
+    "placement": "audience-network-native",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 398,
+    "height": 208,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxImageKb": 30720,
+    "minWidth": 398,
+    "minHeight": 208,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "audience-network-rewarded-video",
+    "objective": "awareness",
+    "ratio": "4:5",
+    "width": 1440,
+    "height": 1800,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 150,
+    "headline": 27,
+    "maxImageKb": 30720,
+    "minWidth": 600,
+    "aspectTolerance": 3,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
     "placement": "facebook-feed",
     "objective": "awareness",
     "ratio": "4:5",
@@ -667,6 +706,97 @@
     "minWidth": 600,
     "minHeight": 600,
     "aspectTolerance": 3,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "facebook-right-hand-column",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "headline": 40,
+    "minWidth": 254,
+    "minHeight": 133,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "instagram-explore-home",
+    "objective": "awareness",
+    "ratio": "4:5",
+    "width": 1440,
+    "height": 1800,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "instagram-reels",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 44,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "instagram-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "messenger-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "aspectTolerance": 1,
     "landingUrlRequired": false,
     "instantExperienceRequired": false
   },
@@ -819,6 +949,46 @@
     ],
     "primaryText": 150,
     "headline": 27,
+    "maxVideoKb": 4194304,
+    "minWidth": 120,
+    "minHeight": 120,
+    "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-instream-video",
+    "objective": "awareness",
+    "ratio": "16:9 / 1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxVideoKb": 4194304,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-marketplace",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "headline": 25,
     "maxVideoKb": 4194304,
     "minWidth": 120,
     "minHeight": 120,

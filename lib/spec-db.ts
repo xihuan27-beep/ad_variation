@@ -212,6 +212,21 @@ function rank(fuse: Fuse<SpecEntry>, queries: string[], limit = 8): SpecMatch[] 
   return [...byId.values()].sort((a, b) => b.score - a.score);
 }
 
+/**
+ * 생성된 Meta 상품명에서 광고 형식을 읽는다 ("인지도 — 동영상 (Facebook 피드)").
+ * 한 지면에 이미지·동영상·슬라이드·컬렉션 규격이 모두 있으므로, 엑셀이 말하는
+ * 소재 유형과 맞는 형식을 골라야 한다.
+ */
+function productFormat(entry: SpecEntry): '이미지' | '동영상' | '슬라이드' | '컬렉션' | null {
+  const m = entry.productName.match(/—\s*(이미지|동영상|슬라이드|컬렉션)\s*\(/);
+  return (m?.[1] as '이미지' | '동영상' | '슬라이드' | '컬렉션') ?? null;
+}
+
+/** 검색어가 슬라이드·컬렉션을 명시했는지 — 명시했으면 그 형식을 존중한다 */
+function mentionsCompositeFormat(product?: string): boolean {
+  return /슬라이드|캐러셀|carousel|컬렉션|collection/i.test(product ?? '');
+}
+
 /** 엑셀의 소재 유형 표기를 영역 유형으로 해석한다 */
 function unitToAreaType(unit?: string): AssetAreaType | null {
   if (!unit) return null;
@@ -231,10 +246,21 @@ function hasAreaType(entry: SpecEntry, t: AssetAreaType): boolean {
  * 동영상 지면에 이미지 규격이 확신 매칭으로 붙어 경고 없이 잘못된 규격을
  * 보여주게 된다 (예: "FB Instream" 동영상 행 → 인스트림 '이미지' 규격).
  */
-function preferUnit(candidates: SpecMatch[], unit?: string): SpecMatch | null {
+function preferUnit(candidates: SpecMatch[], unit?: string, product?: string): SpecMatch | null {
   if (candidates.length === 0) return null;
   const want = unitToAreaType(unit);
   if (!want) return candidates[0];
+
+  // 엑셀이 "Image"/"Video" 라고만 적었다면 단일 소재 형식을 뜻한다.
+  // 슬라이드·컬렉션은 소재를 여러 장 묶는 별도 형식이라, 검색어가 그것을
+  // 명시하지 않았는데 먼저 고르면 엉뚱한 규격을 보여주게 된다.
+  if (!mentionsCompositeFormat(product)) {
+    const wantFormat = want === 'VIDEO' ? '동영상' : '이미지';
+    const exact = candidates.find((c) => productFormat(c.entry) === wantFormat);
+    // 형식이 맞더라도 이름이 훨씬 잘 맞는 후보를 밀어내면 안 된다.
+    // 별칭이 정확히 일치한 상품(1.00)을 형식만 맞는 0.3짜리로 바꾸면 손해다.
+    if (exact && exact.score >= candidates[0].score - FORMAT_PREFERENCE_MARGIN) return exact;
+  }
 
   const fit = candidates.find((c) => hasAreaType(c.entry, want));
   if (fit) return fit;
@@ -248,6 +274,12 @@ function preferUnit(candidates: SpecMatch[], unit?: string): SpecMatch | null {
  * 이보다 낮으면 매칭 실패로 처리한다.
  */
 const MIN_CROSS_MEDIA_SCORE = 0.5;
+
+/**
+ * 소재 유형이 맞는 상품을 우선할 때 감수할 수 있는 점수 차.
+ * 이보다 크게 벌어지면 이름이 더 잘 맞는 쪽을 택한다.
+ */
+const FORMAT_PREFERENCE_MARGIN = 0.25;
 
 /** 이 점수 미만이면 화면에서 "확인 필요"로 표시한다 */
 export const LOW_CONFIDENCE_SCORE = 0.6;
@@ -294,10 +326,10 @@ export function matchSpec(mediaName: string, productName?: string, unit?: string
     }
     const variants = queryVariants(product);
 
-    const best = preferUnit(rank(productFuseFor(media), variants), unit);
+    const best = preferUnit(rank(productFuseFor(media), variants), unit, product);
     if (best) return best;
 
-    const loose = preferUnit(rank(looseProductFuseFor(media), variants), unit);
+    const loose = preferUnit(rank(looseProductFuseFor(media), variants), unit, product);
     if (loose) return { entry: loose.entry, score: loose.score * 0.5 };
 
     const entry = ENTRIES.find((e) => e.mediaName === media);
@@ -310,7 +342,7 @@ export function matchSpec(mediaName: string, productName?: string, unit?: string
   // 매칭 실패보다 훨씬 위험하다.
   const fallbackQuery = product || mediaName.trim();
   if (!fallbackQuery) return null;
-  const best = preferUnit(rank(globalProductFuse, queryVariants(fallbackQuery)), unit);
+  const best = preferUnit(rank(globalProductFuse, queryVariants(fallbackQuery)), unit, product);
   if (!best) return null;
   const score = best.score * 0.8;
   return score >= MIN_CROSS_MEDIA_SCORE ? { entry: best.entry, score } : null;

@@ -5,7 +5,7 @@
  * 재생성: node tools/meta-extract.mjs <pdf...> > data/meta-specs.json
  *         node tools/build-meta-specs.mjs
  *
- * 게재위치 43건.
+ * 게재위치 52건.
  */
 
 import type { MediaProduct } from './spec-data';
@@ -319,6 +319,27 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         ],
       },
       {
+        name: "인지도 — 이미지 (Audience Network 네이티브)",
+        aliases: ["Audience Network 네이티브","Audience Network Native","Audience Network 네이티브 이미지","Audience Network Native 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 398, heightPx: 208, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "398 × 208 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 398px / 최소 높이 208px", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Audience Network 보상형 동영상)",
+        aliases: ["Audience Network 보상형 동영상","Audience Network Rewarded Video","Audience Network 보상형 동영상 이미지","Audience Network Rewarded Video 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 1800, ratio: "4:5", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1800 px 이상 / 4:5 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 150, specLabel: "150자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
         name: "인지도 — 이미지 (Facebook 피드)",
         aliases: ["Facebook 피드","Facebook Feed","FB 피드","페이스북 피드","FB Feed","페이스북 Feed","Facebook 피드 이미지","Facebook Feed 이미지","FB 피드 이미지","페이스북 피드 이미지","FB Feed 이미지","페이스북 Feed 이미지"],
         areas: [
@@ -337,6 +358,53 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
         { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
         { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Facebook 우측 칼럼)",
+        aliases: ["Facebook 우측 칼럼","Facebook Right Hand Column","FB 우측 칼럼","페이스북 우측 칼럼","FB Right Hand Column","페이스북 Right Hand Column","Facebook 우측 칼럼 이미지","Facebook Right Hand Column 이미지","FB 우측 칼럼 이미지","페이스북 우측 칼럼 이미지","FB Right Hand Column 이미지","페이스북 Right Hand Column 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1", formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 1:1 / JPG, PNG", notes: "최소 너비 254px / 최소 높이 133px", isUserInput: false },
+        { displayOrder: 2, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Instagram 탐색 홈)",
+        aliases: ["Instagram 탐색 홈","Instagram Explore Home","IG 탐색 홈","인스타그램 탐색 홈","IG Explore Home","인스타그램 Explore Home","Instagram 탐색 홈 이미지","Instagram Explore Home 이미지","IG 탐색 홈 이미지","인스타그램 탐색 홈 이미지","IG Explore Home 이미지","인스타그램 Explore Home 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 1800, ratio: "4:5", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1800 px 이상 / 4:5 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Instagram 릴스)",
+        aliases: ["Instagram 릴스","Instagram Reels","IG 릴스","인스타그램 릴스","IG Reels","인스타그램 Reels","Instagram 릴스 이미지","Instagram Reels 이미지","IG 릴스 이미지","인스타그램 릴스 이미지","IG Reels 이미지","인스타그램 Reels 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 44, specLabel: "44자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Instagram 스토리)",
+        aliases: ["Instagram 스토리","Instagram Story","IG 스토리","인스타그램 스토리","IG Story","인스타그램 Story","Instagram 스토리 이미지","Instagram Story 이미지","IG 스토리 이미지","인스타그램 스토리 이미지","IG Story 이미지","인스타그램 Story 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Messenger 스토리)",
+        aliases: ["Messenger 스토리","Messenger Story","메신저 스토리","메신저 Story","Messenger 스토리 이미지","Messenger Story 이미지","메신저 스토리 이미지","메신저 Story 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
         ],
       },
       {
@@ -417,6 +485,27 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         { displayOrder: 5, areaName: "기본 문구", areaType: "TEXT", maxChars: 150, specLabel: "150자 권장", isUserInput: true },
         { displayOrder: 6, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
         { displayOrder: 7, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 인스트림 동영상)",
+        aliases: ["Facebook 인스트림 동영상","Facebook Instream Video","FB 인스트림 동영상","페이스북 인스트림 동영상","FB Instream Video","페이스북 Instream Video","Facebook 인스트림 동영상 동영상","Facebook Instream Video 동영상","FB 인스트림 동영상 동영상","페이스북 인스트림 동영상 동영상","FB Instream Video 동영상","페이스북 Instream Video 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "16:9 / 1:1", formats: ["MP4","MOV","GIF"], specLabel: "1080 × 1080 px 이상 / 16:9 / 1:1 / MP4, MOV, GIF", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1080, heightPx: 1080, ratio: "16:9 / 1:1", maxFileSizeKb: 4194304, specLabel: "1080 × 1080 px 이상 / 16:9 / 1:1 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 마켓플레이스)",
+        aliases: ["Facebook 마켓플레이스","Facebook Marketplace","FB 마켓플레이스","페이스북 마켓플레이스","FB Marketplace","페이스북 Marketplace","Facebook 마켓플레이스 동영상","Facebook Marketplace 동영상","FB 마켓플레이스 동영상","페이스북 마켓플레이스 동영상","FB Marketplace 동영상","페이스북 Marketplace 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1", formats: ["MP4","MOV","GIF"], specLabel: "1080 × 1080 px 이상 / 1:1 / MP4, MOV, GIF", notes: "최소 너비 120px / 최소 높이 120px", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1080, heightPx: 1080, ratio: "1:1", maxDurationSec: 14460, maxFileSizeKb: 4194304, specLabel: "1080 × 1080 px 이상 / 1:1 / 최대 241분 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 25, specLabel: "25자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
         ],
       },
       {
