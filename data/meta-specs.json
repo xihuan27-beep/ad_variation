@@ -714,6 +714,66 @@
   },
   {
     "format": "video",
+    "placement": "facebook-biz-disco-feed",
+    "objective": "awareness",
+    "ratio": "1:1 / 4:5",
+    "ratioNote": "1:1(데스크톱 또는 모바일) 또는 4:5(모바일만) 동영상 설정: H.264 압축, 정사각형 픽셀, 고정 프레임 속도,",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 27,
+    "description": 27,
+    "maxVideoKb": 4194304,
+    "minWidth": 120,
+    "minHeight": 120,
+    "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-facebook-reels",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 40,
+    "maxVideoKb": 4194304,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-facebook-reels-overlay",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1440,
+    "height": 1440,
+    "imageFormats": [
+      "MP4",
+      "MOV"
+    ],
+    "primaryText": 60,
+    "maxVideoKb": 4194304,
+    "videoDurationSec": 4,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
     "placement": "facebook-feed",
     "objective": "awareness",
     "ratio": "4:5",
@@ -796,6 +856,51 @@
     "minWidth": 120,
     "minHeight": 120,
     "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-search",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxVideoKb": 4194304,
+    "minWidth": 120,
+    "minHeight": 120,
+    "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxVideoKb": 4194304,
+    "minWidth": 250,
+    "videoDurationSec": 180,
+    "aspectTolerance": 1,
     "landingUrlRequired": false,
     "instantExperienceRequired": false,
     "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"

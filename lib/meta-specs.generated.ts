@@ -5,7 +5,7 @@
  * 재생성: node tools/meta-extract.mjs <pdf...> > data/meta-specs.json
  *         node tools/build-meta-specs.mjs
  *
- * 게재위치 38건.
+ * 게재위치 43건.
  */
 
 import type { MediaProduct } from './spec-data';
@@ -364,6 +364,38 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         ],
       },
       {
+        name: "인지도 — 동영상 (Facebook 비즈니스 발견 피드)",
+        aliases: ["Facebook 비즈니스 발견 피드","Facebook Biz Disco Feed","FB 비즈니스 발견 피드","페이스북 비즈니스 발견 피드","FB Biz Disco Feed","페이스북 Biz Disco Feed","Facebook 비즈니스 발견 피드 동영상","Facebook Biz Disco Feed 동영상","FB 비즈니스 발견 피드 동영상","페이스북 비즈니스 발견 피드 동영상","FB Biz Disco Feed 동영상","페이스북 Biz Disco Feed 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1 / 4:5", formats: ["MP4","MOV","GIF"], specLabel: "1080 × 1080 px 이상 / 1:1 / 4:5 / MP4, MOV, GIF", notes: "1:1(데스크톱 또는 모바일) 또는 4:5(모바일만) 동영상 설정: H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 최소 너비 120px / 최소 높이 120px", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1080, heightPx: 1080, ratio: "1:1 / 4:5", maxDurationSec: 14460, maxFileSizeKb: 4194304, specLabel: "1080 × 1080 px 이상 / 1:1 / 4:5 / 최대 241분 / 최대 4GB", notes: "1:1(데스크톱 또는 모바일) 또는 4:5(모바일만) 동영상 설정: H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "설명", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
+        { displayOrder: 6, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 릴스)",
+        aliases: ["Facebook 릴스","Facebook Reels","FB 릴스","페이스북 릴스","FB Reels","페이스북 Reels","Facebook 릴스 동영상","Facebook Reels 동영상","FB 릴스 동영상","페이스북 릴스 동영상","FB Reels 동영상","페이스북 Reels 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", formats: ["MP4","MOV","GIF"], specLabel: "1440 × 2560 px 이상 / 9:16 / MP4, MOV, GIF", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxFileSizeKb: 4194304, specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 릴스 오버레이)",
+        aliases: ["Facebook 릴스 오버레이","Facebook Reels Overlay","FB 릴스 오버레이","페이스북 릴스 오버레이","FB Reels Overlay","페이스북 Reels Overlay","Facebook 릴스 오버레이 동영상","Facebook Reels Overlay 동영상","FB 릴스 오버레이 동영상","페이스북 릴스 오버레이 동영상","FB Reels Overlay 동영상","페이스북 Reels Overlay 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 1440, ratio: "1:1", formats: ["MP4","MOV"], specLabel: "1440 × 1440 px 이상 / 1:1 / MP4, MOV", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1440, heightPx: 1440, ratio: "1:1", maxDurationSec: 4, maxFileSizeKb: 4194304, specLabel: "1440 × 1440 px 이상 / 1:1 / 최대 0분 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 60, specLabel: "60자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
         name: "인지도 — 동영상 (Facebook 피드)",
         aliases: ["Facebook 피드","Facebook Feed","FB 피드","페이스북 피드","FB Feed","페이스북 Feed","Facebook 피드 동영상","Facebook Feed 동영상","FB 피드 동영상","페이스북 피드 동영상","FB Feed 동영상","페이스북 Feed 동영상"],
         areas: [
@@ -398,6 +430,29 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         { displayOrder: 5, areaName: "기본 문구", areaType: "TEXT", maxChars: 150, specLabel: "150자 권장", isUserInput: true },
         { displayOrder: 6, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
         { displayOrder: 7, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 검색 결과)",
+        aliases: ["Facebook 검색 결과","Facebook Search","FB 검색 결과","페이스북 검색 결과","FB Search","페이스북 Search","Facebook 검색 결과 동영상","Facebook Search 동영상","FB 검색 결과 동영상","페이스북 검색 결과 동영상","FB Search 동영상","페이스북 Search 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1", formats: ["MP4","MOV","GIF"], specLabel: "1080 × 1080 px 이상 / 1:1 / MP4, MOV, GIF", notes: "최소 너비 120px / 최소 높이 120px", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1080, heightPx: 1080, ratio: "1:1", maxDurationSec: 14460, maxFileSizeKb: 4194304, specLabel: "1080 × 1080 px 이상 / 1:1 / 최대 241분 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
+        { displayOrder: 6, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 동영상 (Facebook 스토리)",
+        aliases: ["Facebook 스토리","Facebook Story","FB 스토리","페이스북 스토리","FB Story","페이스북 Story","Facebook 스토리 동영상","Facebook Story 동영상","FB 스토리 동영상","페이스북 스토리 동영상","FB Story 동영상","페이스북 Story 동영상"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", formats: ["MP4","MOV","GIF"], specLabel: "1440 × 2560 px 이상 / 9:16 / MP4, MOV, GIF", notes: "최소 너비 250px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "동영상", areaType: "VIDEO", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxDurationSec: 180, maxFileSizeKb: 4194304, specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 3분 / 최대 4GB", notes: "H.264 압축, 정사각형 픽셀, 고정 프레임 속도, / 가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
         ],
       },
       {
