@@ -1476,6 +1476,56 @@ export const MEDIA_DATA: MediaEntry[] = [
           { displayOrder: 4, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
         ],
       },
+      {
+        name: 'Awareness — Collection (Facebook 동영상 피드)',
+        aliases: ['Facebook Video Feeds', 'FB Video Feeds', '페이스북 동영상 피드', 'FB 동영상 피드'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '커버는 인스턴트 경험의 첫 번째 미디어가 사용된다', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        // 같은 컬렉션인데도 릴스는 비율·글자 수가 뚜렷이 다르다 (9:16~1:1 / 72자 / 10자)
+        name: 'Awareness — Collection (Facebook 릴스)',
+        aliases: ['Facebook Reels', 'FB Reels', '페이스북 릴스', 'FB 릴스'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '9:16 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 9:16 ~ 1:1 / 최대 30MB / JPG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '9:16 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 9:16 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 72, specLabel: '72자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '제목', areaType: 'TEXT', maxChars: 10, specLabel: '10자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Carousel (Facebook 그룹 피드)',
+        aliases: ['Facebook Groups Feed', 'FB Groups Feed', '페이스북 그룹 피드', 'FB 그룹 피드', '그룹 피드'],
+        areas: [
+          { displayOrder: 1, areaName: '카드 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 (1:1) / 최대 30MB / JPG, PNG', notes: '슬라이드 2~10개 / 화면 비율 허용 범위 3%', isUserInput: false },
+          { displayOrder: 2, areaName: '카드 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxDurationSec: 240 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 (1:1) / 1초~240분 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '슬라이드 수', areaType: 'TEXT', specLabel: '2~10개', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 80, specLabel: '80자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '제목', areaType: 'TEXT', maxChars: 20, specLabel: '20자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '설명', areaType: 'TEXT', maxChars: 18, specLabel: '18자 권장', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        // 우측 칼럼은 기본 문구·설명 항목이 없고 제목만 쓴다
+        name: 'Awareness — Carousel (Facebook 우측 칼럼)',
+        aliases: ['Facebook Right Hand Column', 'FB Right Column', '페이스북 우측 칼럼', '우측 칼럼', 'RHC'],
+        areas: [
+          { displayOrder: 1, areaName: '카드 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 (1:1) / 최대 30MB / JPG, PNG', notes: '슬라이드 2~10개 / 화면 비율 허용 범위 3% / 슬라이드마다 별도 링크를 넣을 수 있다', isUserInput: false },
+          { displayOrder: 2, areaName: '카드 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxDurationSec: 240 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 (1:1) / 1초~240분 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '슬라이드 수', areaType: 'TEXT', specLabel: '2~10개', isUserInput: true },
+          { displayOrder: 4, areaName: '제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', notes: '이 게재위치는 기본 문구·설명 항목이 없다', isUserInput: true },
+          { displayOrder: 5, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
     ],
   },
 
