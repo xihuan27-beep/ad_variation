@@ -1411,6 +1411,71 @@ export const MEDIA_DATA: MediaEntry[] = [
           { displayOrder: 5, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
         ],
       },
+
+      // ─────────────────────────────────────────────
+      // 컬렉션 · 게재위치별 규격
+      // 출처: Meta 광고 가이드 한국어판
+      // (ko-kr.facebook.com/business/ads-guide/update/collection/*, 26.8.21)
+      //
+      // 같은 컬렉션 형식이라도 게재위치마다 비율·해상도·텍스트가 다르다.
+      // 릴스는 커버 9:16 에 500×888, 마켓플레이스는 1:1 에 제목 25자다.
+      // ─────────────────────────────────────────────
+      {
+        name: 'Awareness — Collection (Instagram 피드)',
+        aliases: ['Instagram Feed Collection', 'IG Feed Collection', '인스타그램 피드 컬렉션', 'IG 피드 컬렉션'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '최소 너비·높이 500px / 커버는 인스턴트 경험의 첫 번째 미디어가 사용된다', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', notes: '최소 너비·높이 500px', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Collection (Instagram 스토리)',
+        aliases: ['Instagram Story Collection', 'IG Story Collection', '인스타그램 스토리 컬렉션', 'IG 스토리 컬렉션'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '최소 너비·높이 500px', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', notes: '최소 너비·높이 500px', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Collection (Instagram 릴스)',
+        aliases: ['Instagram Reels Collection', 'IG Reels Collection', '인스타그램 릴스 컬렉션', 'IG 릴스 컬렉션'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 (9:16)', areaType: 'IMAGE', widthPx: 500, heightPx: 888, ratio: '9:16', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '500 × 888 px 이상 / 커버 비율 9:16 / 최대 30MB / JPG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상 (9:16)', areaType: 'VIDEO', widthPx: 500, heightPx: 888, ratio: '9:16', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV'], specLabel: '500 × 888 px 이상 / 9:16 / 최대 4GB / MP4, MOV', notes: '이 게재위치는 GIF 를 지원하지 않는다', isUserInput: false },
+          { displayOrder: 3, areaName: '제품 이미지', areaType: 'IMAGE', ratio: '1:1', specLabel: '제품 이미지 비율 1:1', isUserInput: false },
+          { displayOrder: 4, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 5, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Collection (Instagram 탐색)',
+        aliases: ['Instagram Explore', 'IG Explore', '인스타그램 탐색', 'IG 탐색', '탐색 탭'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '9:16', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 권장 비율 9:16 / 최대 30MB / JPG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '9:16', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 권장 비율 9:16 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Collection (Facebook 마켓플레이스)',
+        aliases: ['Facebook Marketplace', 'FB Marketplace', '마켓플레이스', '페이스북 마켓플레이스'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1:1 / 최대 30MB / JPG, PNG', isUserInput: false },
+          { displayOrder: 2, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', isUserInput: true },
+          { displayOrder: 3, areaName: '제목', areaType: 'TEXT', maxChars: 25, specLabel: '25자 권장', isUserInput: true },
+          { displayOrder: 4, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
     ],
   },
 
