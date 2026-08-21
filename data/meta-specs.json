@@ -772,6 +772,24 @@
   },
   {
     "format": "image",
+    "placement": "facebook-marketplace",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxImageKb": 30720,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
     "placement": "facebook-right-hand-column",
     "objective": "awareness",
     "ratio": "1:1",
@@ -804,6 +822,54 @@
     "maxImageKb": 30720,
     "minWidth": 600,
     "minHeight": 600,
+    "aspectTolerance": 3,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "facebook-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "image",
+    "placement": "facebook-video-feeds",
+    "objective": "awareness",
+    "ratio": "1.91:1 / 4:5",
+    "variants": [
+      {
+        "ratio": "1:1",
+        "width": 1440,
+        "height": 1440
+      },
+      {
+        "ratio": "4:5",
+        "width": 1440,
+        "height": 1800
+      }
+    ],
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 150,
+    "headline": 27,
+    "maxImageKb": 30720,
+    "minWidth": 600,
     "aspectTolerance": 3,
     "landingUrlRequired": false,
     "instantExperienceRequired": false

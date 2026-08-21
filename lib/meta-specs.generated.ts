@@ -5,7 +5,7 @@
  * 재생성: node tools/meta-extract.mjs <pdf...> > data/meta-specs.json
  *         node tools/build-meta-specs.mjs
  *
- * 게재위치 57건.
+ * 게재위치 60건.
  */
 
 import type { MediaProduct } from './spec-data';
@@ -392,6 +392,17 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         ],
       },
       {
+        name: "인지도 — 이미지 (Facebook 마켓플레이스)",
+        aliases: ["Facebook 마켓플레이스","Facebook Marketplace","FB 마켓플레이스","페이스북 마켓플레이스","FB Marketplace","페이스북 Marketplace","Facebook 마켓플레이스 이미지","Facebook Marketplace 이미지","FB 마켓플레이스 이미지","페이스북 마켓플레이스 이미지","FB Marketplace 이미지","페이스북 Marketplace 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 1:1 / 최대 30MB / JPG, PNG", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
         name: "인지도 — 이미지 (Facebook 우측 칼럼)",
         aliases: ["Facebook 우측 칼럼","Facebook Right Hand Column","FB 우측 칼럼","페이스북 우측 칼럼","FB Right Hand Column","페이스북 Right Hand Column","Facebook 우측 칼럼 이미지","Facebook Right Hand Column 이미지","FB 우측 칼럼 이미지","페이스북 우측 칼럼 이미지","FB Right Hand Column 이미지","페이스북 Right Hand Column 이미지"],
         areas: [
@@ -408,6 +419,27 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
         { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
         { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Facebook 스토리)",
+        aliases: ["Facebook 스토리","Facebook Story","FB 스토리","페이스북 스토리","FB Story","페이스북 Story","Facebook 스토리 이미지","Facebook Story 이미지","FB 스토리 이미지","페이스북 스토리 이미지","FB Story 이미지","페이스북 Story 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Facebook 동영상 피드)",
+        aliases: ["Facebook 동영상 피드","Facebook Video Feeds","FB 동영상 피드","페이스북 동영상 피드","FB Video Feeds","페이스북 Video Feeds","Facebook 동영상 피드 이미지","Facebook Video Feeds 이미지","FB 동영상 피드 이미지","페이스북 동영상 피드 이미지","FB Video Feeds 이미지","페이스북 Video Feeds 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지 (1:1)", areaType: "IMAGE", widthPx: 1440, heightPx: 1440, ratio: "1:1", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1440 px 이상 / 1:1 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 2, areaName: "이미지 (4:5)", areaType: "IMAGE", widthPx: 1440, heightPx: 1800, ratio: "4:5", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1800 px 이상 / 4:5 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 3, areaName: "기본 문구", areaType: "TEXT", maxChars: 150, specLabel: "150자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
         { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
         ],
       },
