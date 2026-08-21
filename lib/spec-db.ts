@@ -163,6 +163,44 @@ export interface SpecMatch {
 }
 
 /**
+ * 상품명 검색어의 변형을 만든다.
+ *
+ * 기획 엑셀의 상품 표기에는 DB 상품명에 없는 수식어가 자주 붙는다
+ * ("택시 핀테마 (1/3)", "대리 핀테마 (성인타게팅)", "New 택시 호출중 배너").
+ * 원문 그대로만 검색하면 이미 DB에 있는 상품인데도 점수가 크게 떨어진다.
+ * 원문과 정리본을 모두 검색해 가장 높은 점수를 쓴다.
+ */
+function queryVariants(product: string): string[] {
+  const variants = [product];
+
+  // 괄호 안 수식어 제거 — 회차 (1/3), 타게팅 (성인타게팅), 조합 (VA+DA) 등
+  const noParens = product.replace(/[([{][^)\]}]*[)\]}]/g, ' ').replace(/\s+/g, ' ').trim();
+  if (noParens && noParens !== product) variants.push(noParens);
+
+  // 구분자를 공백으로 풀고 관용적인 접두어를 떼어 낸다
+  const loosened = noParens
+    .replace(/[_/\-—·]+/g, ' ')
+    .replace(/^(new|신규)\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (loosened && !variants.includes(loosened)) variants.push(loosened);
+
+  return variants;
+}
+
+/** 여러 검색어 변형 중 가장 높은 점수의 결과를 고른다 */
+function bestOf(fuse: Fuse<SpecEntry>, queries: string[]): { entry: SpecEntry; score: number } | null {
+  let best: { entry: SpecEntry; score: number } | null = null;
+  for (const q of queries) {
+    const [hit] = fuse.search(q, { limit: 1 });
+    if (!hit) continue;
+    const score = 1 - (hit.score ?? 1);
+    if (!best || score > best.score) best = { entry: hit.item, score };
+  }
+  return best;
+}
+
+/**
  * 매체를 특정하지 못한 채 DB 전체에서 찾은 결과를 받아들이는 최소 점수.
  * 이보다 낮으면 매칭 실패로 처리한다.
  */
@@ -211,11 +249,13 @@ export function matchSpec(mediaName: string, productName?: string): SpecMatch | 
       const entry = ENTRIES.find((e) => e.mediaName === media);
       return entry ? { entry, score: 0.4 } : null;
     }
-    const [best] = productFuseFor(media).search(product, { limit: 1 });
-    if (best) return { entry: best.item, score: 1 - (best.score ?? 1) };
+    const variants = queryVariants(product);
 
-    const [loose] = looseProductFuseFor(media).search(product, { limit: 1 });
-    if (loose) return { entry: loose.item, score: (1 - (loose.score ?? 1)) * 0.5 };
+    const best = bestOf(productFuseFor(media), variants);
+    if (best) return best;
+
+    const loose = bestOf(looseProductFuseFor(media), variants);
+    if (loose) return { entry: loose.entry, score: loose.score * 0.5 };
 
     const entry = ENTRIES.find((e) => e.mediaName === media);
     return entry ? { entry, score: 0.2 } : null;
@@ -227,10 +267,10 @@ export function matchSpec(mediaName: string, productName?: string): SpecMatch | 
   // 매칭 실패보다 훨씬 위험하다.
   const fallbackQuery = product || mediaName.trim();
   if (!fallbackQuery) return null;
-  const [best] = globalProductFuse.search(fallbackQuery, { limit: 1 });
+  const best = bestOf(globalProductFuse, queryVariants(fallbackQuery));
   if (!best) return null;
-  const score = (1 - (best.score ?? 1)) * 0.8;
-  return score >= MIN_CROSS_MEDIA_SCORE ? { entry: best.item, score } : null;
+  const score = best.score * 0.8;
+  return score >= MIN_CROSS_MEDIA_SCORE ? { entry: best.entry, score } : null;
 }
 
 export function matchSpecAll(mediaName: string, productName?: string, limit = 5): SpecMatch[] {
