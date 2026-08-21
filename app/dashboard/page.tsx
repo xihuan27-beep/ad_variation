@@ -27,7 +27,7 @@ const INITIAL_META: CampaignMeta = {
 /** 엑셀에서 읽은 집행 건을 마스터 DB에 연결해 작업 항목으로 만든다 */
 function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
   return rows.map((row) => {
-    const match = matchSpec(row.mediaName, row.productName);
+    const match = matchSpec(row.mediaName, row.productName, row.unit);
     const entry = match?.entry ?? null;
     const values: WorkItem['values'] = {};
 

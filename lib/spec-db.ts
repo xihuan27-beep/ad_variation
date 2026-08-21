@@ -188,16 +188,48 @@ function queryVariants(product: string): string[] {
   return variants;
 }
 
-/** 여러 검색어 변형 중 가장 높은 점수의 결과를 고른다 */
-function bestOf(fuse: Fuse<SpecEntry>, queries: string[]): { entry: SpecEntry; score: number } | null {
-  let best: { entry: SpecEntry; score: number } | null = null;
+/** 여러 검색어 변형의 결과를 합쳐 점수 내림차순으로 돌려준다 */
+function rank(fuse: Fuse<SpecEntry>, queries: string[], limit = 8): SpecMatch[] {
+  const byId = new Map<string, SpecMatch>();
   for (const q of queries) {
-    const [hit] = fuse.search(q, { limit: 1 });
-    if (!hit) continue;
-    const score = 1 - (hit.score ?? 1);
-    if (!best || score > best.score) best = { entry: hit.item, score };
+    for (const hit of fuse.search(q, { limit })) {
+      const score = 1 - (hit.score ?? 1);
+      const prev = byId.get(hit.item.id);
+      if (!prev || score > prev.score) byId.set(hit.item.id, { entry: hit.item, score });
+    }
   }
-  return best;
+  return [...byId.values()].sort((a, b) => b.score - a.score);
+}
+
+/** 엑셀의 소재 유형 표기를 영역 유형으로 해석한다 */
+function unitToAreaType(unit?: string): AssetAreaType | null {
+  if (!unit) return null;
+  if (/video|동영상|비디오|영상/i.test(unit)) return 'VIDEO';
+  if (/image|이미지|배너|정지|still/i.test(unit)) return 'IMAGE';
+  return null;
+}
+
+function hasAreaType(entry: SpecEntry, t: AssetAreaType): boolean {
+  return entry.areas.some((a) => a.areaType === t);
+}
+
+/**
+ * 소재 유형이 주어지면 그 유형의 소재를 실제로 요구하는 상품을 우선한다.
+ *
+ * 같은 지면이라도 영상용·이미지용 규격이 따로 있다. 유형을 무시하면
+ * 동영상 지면에 이미지 규격이 확신 매칭으로 붙어 경고 없이 잘못된 규격을
+ * 보여주게 된다 (예: "FB Instream" 동영상 행 → 인스트림 '이미지' 규격).
+ */
+function preferUnit(candidates: SpecMatch[], unit?: string): SpecMatch | null {
+  if (candidates.length === 0) return null;
+  const want = unitToAreaType(unit);
+  if (!want) return candidates[0];
+
+  const fit = candidates.find((c) => hasAreaType(c.entry, want));
+  if (fit) return fit;
+
+  // 유형이 맞는 상품이 없다 — 최선의 후보를 주되 확신을 낮춰 확인을 유도한다
+  return { entry: candidates[0].entry, score: candidates[0].score * 0.5 };
 }
 
 /**
@@ -238,7 +270,7 @@ export function resolveMedia(mediaName: string): string | null {
  * ("네이버 GFA 스마트채널" → 매칭 실패) 정확도가 떨어진다. 엑셀이 매체·상품을
  * 별도 컬럼으로 갖는 구조를 그대로 살려, 매체로 후보를 좁힌 뒤 상품을 매칭한다.
  */
-export function matchSpec(mediaName: string, productName?: string): SpecMatch | null {
+export function matchSpec(mediaName: string, productName?: string, unit?: string): SpecMatch | null {
   const media = resolveMedia(mediaName);
   const product = productName?.trim();
 
@@ -251,10 +283,10 @@ export function matchSpec(mediaName: string, productName?: string): SpecMatch | 
     }
     const variants = queryVariants(product);
 
-    const best = bestOf(productFuseFor(media), variants);
+    const best = preferUnit(rank(productFuseFor(media), variants), unit);
     if (best) return best;
 
-    const loose = bestOf(looseProductFuseFor(media), variants);
+    const loose = preferUnit(rank(looseProductFuseFor(media), variants), unit);
     if (loose) return { entry: loose.entry, score: loose.score * 0.5 };
 
     const entry = ENTRIES.find((e) => e.mediaName === media);
@@ -267,7 +299,7 @@ export function matchSpec(mediaName: string, productName?: string): SpecMatch | 
   // 매칭 실패보다 훨씬 위험하다.
   const fallbackQuery = product || mediaName.trim();
   if (!fallbackQuery) return null;
-  const best = bestOf(globalProductFuse, queryVariants(fallbackQuery));
+  const best = preferUnit(rank(globalProductFuse, queryVariants(fallbackQuery)), unit);
   if (!best) return null;
   const score = best.score * 0.8;
   return score >= MIN_CROSS_MEDIA_SCORE ? { entry: best.entry, score } : null;

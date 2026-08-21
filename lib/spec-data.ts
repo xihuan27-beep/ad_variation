@@ -1394,6 +1394,23 @@ export const MEDIA_DATA: MediaEntry[] = [
           { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
         ],
       },
+      {
+        // 출처: Meta 광고 가이드 "Facebook 인스트림 동영상의 인지도 이미지 광고 사양"
+        // (ko-kr.facebook.com/business/ads-guide/update/image/facebook-instream-video, 26.8.21)
+        // 같은 게재위치의 '동영상' 광고 사양은 다른 문서이며 아직 반영되지 않았다.
+        name: 'Awareness — Image (Facebook 인스트림 동영상)',
+        aliases: [
+          'FB Instream Image', 'Facebook Instream Image', 'FB 인스트림 이미지',
+          '인스트림 이미지', 'Instream Image',
+        ],
+        areas: [
+          { displayOrder: 1, areaName: '이미지 소재', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '최소 너비·높이 600px / 화면 비율 허용 범위 3% / 노출 크기가 작아 이미지 안에 텍스트를 넣지 않는 것이 좋다', isUserInput: false },
+          { displayOrder: 2, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 3, areaName: '제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', isUserInput: true },
+          { displayOrder: 4, areaName: '설명', areaType: 'TEXT', maxChars: 30, specLabel: '30자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
     ],
   },
 

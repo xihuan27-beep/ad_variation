@@ -25,6 +25,8 @@ export interface MediaPlanRow {
   /** 소재 전달 기한 */
   assetDeadline?: string;
   note?: string;
+  /** 소재 유형 표기 (Video / Image 등) — 같은 지면의 영상·이미지 규격을 가르는 데 쓴다 */
+  unit?: string;
   sheetName: string;
   /** 원본 엑셀 행 번호 (1-based) — 사용자가 엑셀에서 찾아보게 하려면 필요 */
   excelRow: number;
@@ -70,6 +72,7 @@ const KW = {
   deadline: ['전달기한', '소재전달', '기한', '마감', '데드라인', 'scheduleddelivery', 'deliverydate', 'delivery'],
   live: ['라이브', '일정', '집행', '기간', 'launchdate', 'launch', 'livedate'],
   note: ['비고', '메모', 'notes', 'note'],
+  unit: ['unit', '소재유형', '소재 유형', '유형', 'assettype', 'creativetype'],
 } as const;
 
 /** No. 열은 완전일치로만 찾는다 — 'Notes' 가 'no' 로 잡히는 사고를 막는다 */
@@ -119,12 +122,14 @@ function parseSheet(sheetName: string, rows: unknown[][]): MediaPlanRow[] {
   const deadlineCol = take(KW.deadline);
   const liveCol = take(KW.live);
   const noteCol = take(KW.note);
+  const unitCol = take(KW.unit);
 
   if (mediaCol < 0 || productCol < 0) return [];
 
   const out: MediaPlanRow[] = [];
   let lastMedia = '';
   let lastDeadline = '';
+  let lastUnit = '';
 
   for (let i = headerIdx + 1; i < rows.length; i++) {
     const row = rows[i] ?? [];
@@ -138,6 +143,9 @@ function parseSheet(sheetName: string, rows: unknown[][]): MediaPlanRow[] {
     if (media) lastMedia = media;
     const deadline = deadlineCol >= 0 ? formatDateCell(norm(row[deadlineCol])) : '';
     if (deadline) lastDeadline = deadline;
+    // 소재 유형도 매체 단위로 첫 행에만 적히므로 이어받는다
+    const unit = unitCol >= 0 ? norm(row[unitCol]) : '';
+    if (unit) lastUnit = unit;
 
     // 매체만 있고 상품이 없는 행은 그룹 머리글일 뿐 집행 건이 아니다
     if (!product) continue;
@@ -154,6 +162,7 @@ function parseSheet(sheetName: string, rows: unknown[][]): MediaPlanRow[] {
       liveSchedule: liveCol >= 0 ? formatDateCell(norm(row[liveCol])) || undefined : undefined,
       assetDeadline: lastDeadline || undefined,
       note: noteCol >= 0 ? norm(row[noteCol]) || undefined : undefined,
+      unit: unitCol >= 0 ? lastUnit || undefined : undefined,
       sheetName,
       excelRow: i + 1,
     });
