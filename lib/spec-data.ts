@@ -1301,7 +1301,7 @@ export const MEDIA_DATA: MediaEntry[] = [
     products: [
       {
         name: 'Traffic & Reach — Video (Feed FB/IG)',
-        aliases: ['메타 피드 동영상', 'Meta Feed Video', 'FBIG Feed Video', 'FB IG Feed'],
+        aliases: ['메타 피드 동영상', 'Meta Feed Video', 'FBIG Feed Video', 'FB IG Feed', 'IG/FB Feed', 'FB/IG Feed', 'IG Feed', 'Feed Video'],
         areas: [
           { displayOrder: 1, areaName: '동영상 (1:1 FB Feed)', areaType: 'VIDEO', widthPx: 1440, heightPx: 1440, ratio: '1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1:1 / 1440x1440px / MP4, MOV, GIF', notes: 'H.264 / 정사각형 픽셀 / 고정 프레임속도 / 128kbps 스테레오 AAC', isUserInput: false },
           { displayOrder: 2, areaName: '동영상 (9:16 IG Feed)', areaType: 'VIDEO', widthPx: 1080, heightPx: 1920, ratio: '9:16', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '9:16 / 1080x1920px 이상 / MP4, MOV, GIF', isUserInput: false },
@@ -1312,7 +1312,7 @@ export const MEDIA_DATA: MediaEntry[] = [
       },
       {
         name: 'Traffic & Reach — Video (Story/Reels FB/IG)',
-        aliases: ['메타 스토리 동영상', 'Meta Story Video', 'FBIG Story Reels', 'Meta Reels'],
+        aliases: ['메타 스토리 동영상', 'Meta Story Video', 'FBIG Story Reels', 'Meta Reels', 'IG/FB Reels', 'FB/IG Reels', 'IG/FB Stories', 'FB/IG Story', 'Reels', 'Stories'],
         areas: [
           { displayOrder: 1, areaName: '동영상 (9:16 Story/Reels)', areaType: 'VIDEO', widthPx: 1440, heightPx: 2560, ratio: '9:16', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '9:16 / 1440x2560px 이상 / MP4, MOV, GIF', notes: '상단 14%, 하단 20% 안전영역 준수', isUserInput: false },
           { displayOrder: 2, areaName: '광고 제목', areaType: 'TEXT', specLabel: null, isUserInput: true },
@@ -1338,6 +1338,60 @@ export const MEDIA_DATA: MediaEntry[] = [
           { displayOrder: 2, areaName: '광고 제목', areaType: 'TEXT', specLabel: null, isUserInput: true },
           { displayOrder: 3, areaName: '기본 문구', areaType: 'TEXT', specLabel: null, isUserInput: true },
           { displayOrder: 4, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
+
+      // ─────────────────────────────────────────────
+      // Awareness 목표 · Facebook Feed 게재위치
+      // 출처: Meta Ads Guide (facebook.com/business/ads-guide/update/*, 26.8.21)
+      //
+      // 위의 Traffic/Reach/Engagement 목표와 목표가 다르면 규격도 달라진다
+      // (예: Feed 동영상이 Traffic 은 1:1, Awareness 는 4:5).
+      // 따라서 덮어쓰지 않고 별도 상품으로 둔다.
+      // ─────────────────────────────────────────────
+      {
+        name: 'Awareness — Image (Facebook Feed)',
+        aliases: ['Awareness Image', '메타 인지도 이미지', 'FB Feed Image', 'Facebook Feed Image'],
+        areas: [
+          { displayOrder: 1, areaName: '이미지 소재', areaType: 'IMAGE', widthPx: 1440, heightPx: 1800, ratio: '4:5', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1440 × 1800 px (4:5) 권장 / 최대 30MB / JPG, PNG', notes: '최소 너비 600px · 4:5 기준 최소 높이 750px / 가로세로 비율 허용 오차 3%', isUserInput: false },
+          { displayOrder: 2, areaName: '기본 문구', areaType: 'TEXT', maxChars: 150, specLabel: '50~150자 권장', isUserInput: true },
+          { displayOrder: 3, areaName: '광고 제목', areaType: 'TEXT', maxChars: 27, specLabel: '27자 권장', isUserInput: true },
+          { displayOrder: 4, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Video (Facebook Feed)',
+        aliases: ['Awareness Video', '메타 인지도 동영상', 'FB Feed Video', 'Facebook Feed Video'],
+        areas: [
+          { displayOrder: 1, areaName: '동영상 소재', areaType: 'VIDEO', widthPx: 1440, heightPx: 1800, ratio: '4:5', maxDurationSec: 241 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1440 × 1800 px (4:5) 권장 / 1초~241분 / 최대 4GB / MP4, MOV, GIF', notes: 'H.264 압축 · 정사각형 픽셀 · 고정 프레임속도 · 프로그레시브 스캔 · 스테레오 AAC 128kbps 이상 / 최소 120 × 120 px / 자막·사운드 권장 / 편집 목록이나 특수 박스를 포함하지 말 것', isUserInput: false },
+          { displayOrder: 2, areaName: '기본 문구', areaType: 'TEXT', maxChars: 150, specLabel: '50~150자 권장', isUserInput: true },
+          { displayOrder: 3, areaName: '광고 제목', areaType: 'TEXT', maxChars: 27, specLabel: '27자 권장', isUserInput: true },
+          { displayOrder: 4, areaName: '랜딩 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Carousel (Facebook Feed)',
+        aliases: ['Carousel', '캐러셀', '캐러셀 광고', 'Awareness Carousel', 'FB Carousel', 'Meta Carousel'],
+        areas: [
+          { displayOrder: 1, areaName: '카드 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 (1:1) / 최대 30MB / JPG, PNG', notes: '카드 2~10장 / 가로세로 비율 허용 오차 3%', isUserInput: false },
+          { displayOrder: 2, areaName: '카드 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxDurationSec: 240 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 (1:1) / 1초~240분 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '카드 수', areaType: 'TEXT', specLabel: '2~10장', notes: '카드마다 이미지 또는 동영상과 제목·설명이 필요하다', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 80, specLabel: '80자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '광고 제목', areaType: 'TEXT', maxChars: 20, specLabel: '20자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '설명', areaType: 'TEXT', maxChars: 18, specLabel: '18자 권장', isUserInput: true },
+          { displayOrder: 7, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Awareness — Collection (Facebook Feed)',
+        aliases: ['Collection', '컬렉션', '컬렉션 광고', 'Awareness Collection', 'FB Collection', 'Meta Collection'],
+        areas: [
+          { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '커버는 인스턴트 경험의 첫 번째 미디어가 그대로 사용된다', isUserInput: false },
+          { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
+          { displayOrder: 3, areaName: '인스턴트 경험', areaType: 'TEXT', specLabel: '필수', notes: '컬렉션 광고는 인스턴트 경험이 반드시 있어야 한다', isUserInput: true },
+          { displayOrder: 4, areaName: '기본 문구', areaType: 'TEXT', maxChars: 125, specLabel: '125자 권장', isUserInput: true },
+          { displayOrder: 5, areaName: '광고 제목', areaType: 'TEXT', maxChars: 40, specLabel: '40자 권장', isUserInput: true },
+          { displayOrder: 6, areaName: '랜딩 URL', areaType: 'URL', specLabel: '필수', isUserInput: true },
         ],
       },
     ],
