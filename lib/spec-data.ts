@@ -1351,7 +1351,7 @@ export const MEDIA_DATA: MediaEntry[] = [
       // ─────────────────────────────────────────────
       {
         name: 'Awareness — Image (Facebook Feed)',
-        aliases: ['Awareness Image', '메타 인지도 이미지', 'FB Feed Image', 'Facebook Feed Image'],
+        aliases: ['Awareness Image', '메타 인지도 이미지', '이미지 피드', 'FB Feed Image', 'Facebook Feed Image'],
         areas: [
           { displayOrder: 1, areaName: '이미지 소재', areaType: 'IMAGE', widthPx: 1440, heightPx: 1800, ratio: '4:5', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1440 × 1800 px (4:5) 권장 / 최대 30MB / JPG, PNG', notes: '최소 너비 600px · 4:5 기준 최소 높이 750px / 가로세로 비율 허용 오차 3%', isUserInput: false },
           { displayOrder: 2, areaName: '기본 문구', areaType: 'TEXT', maxChars: 150, specLabel: '50~150자 권장', isUserInput: true },
@@ -1361,7 +1361,7 @@ export const MEDIA_DATA: MediaEntry[] = [
       },
       {
         name: 'Awareness — Video (Facebook Feed)',
-        aliases: ['Awareness Video', '메타 인지도 동영상', 'FB Feed Video', 'Facebook Feed Video'],
+        aliases: ['Awareness Video', '메타 인지도 동영상', '동영상 피드', 'FB Feed Video', 'Facebook Feed Video'],
         areas: [
           { displayOrder: 1, areaName: '동영상 소재', areaType: 'VIDEO', widthPx: 1440, heightPx: 1800, ratio: '4:5', maxDurationSec: 241 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1440 × 1800 px (4:5) 권장 / 1초~241분 / 최대 4GB / MP4, MOV, GIF', notes: 'H.264 압축 · 정사각형 픽셀 · 고정 프레임속도 · 프로그레시브 스캔 · 스테레오 AAC 128kbps 이상 / 최소 120 × 120 px / 자막·사운드 권장 / 편집 목록이나 특수 박스를 포함하지 말 것', isUserInput: false },
           { displayOrder: 2, areaName: '기본 문구', areaType: 'TEXT', maxChars: 150, specLabel: '50~150자 권장', isUserInput: true },
@@ -1371,7 +1371,7 @@ export const MEDIA_DATA: MediaEntry[] = [
       },
       {
         name: 'Awareness — Carousel (Facebook Feed)',
-        aliases: ['Carousel', '캐러셀', '캐러셀 광고', 'Awareness Carousel', 'FB Carousel', 'Meta Carousel'],
+        aliases: ['Carousel', '슬라이드', '슬라이드 광고', '캐러셀', '캐러셀 광고', 'Awareness Carousel', 'FB Carousel', 'Meta Carousel'],
         areas: [
           { displayOrder: 1, areaName: '카드 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 (1:1) / 최대 30MB / JPG, PNG', notes: '카드 2~10장 / 가로세로 비율 허용 오차 3%', isUserInput: false },
           { displayOrder: 2, areaName: '카드 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', maxDurationSec: 240 * 60, maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 (1:1) / 1초~240분 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
@@ -1384,7 +1384,7 @@ export const MEDIA_DATA: MediaEntry[] = [
       },
       {
         name: 'Awareness — Collection (Facebook Feed)',
-        aliases: ['Collection', '컬렉션', '컬렉션 광고', 'Awareness Collection', 'FB Collection', 'Meta Collection'],
+        aliases: ['Collection', '컬렉션', '컬렉션 광고', '컬렉션 피드', 'Awareness Collection', 'FB Collection', 'Meta Collection'],
         areas: [
           { displayOrder: 1, areaName: '커버 이미지', areaType: 'IMAGE', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 30 * 1024, formats: ['JPG', 'PNG'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 30MB / JPG, PNG', notes: '커버는 인스턴트 경험의 첫 번째 미디어가 그대로 사용된다', isUserInput: false },
           { displayOrder: 2, areaName: '커버 동영상', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1.91:1 ~ 1:1', maxFileSizeKb: 4 * 1024 * 1024, formats: ['MP4', 'MOV', 'GIF'], specLabel: '1080 × 1080 px 이상 / 1.91:1 ~ 1:1 / 최대 4GB / MP4, MOV, GIF', isUserInput: false },
