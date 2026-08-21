@@ -1426,6 +1426,37 @@ export const MEDIA_DATA: MediaEntry[] = [
   },
 
   // ═══════════════════════════════════════════════════
+  // GOOGLE DISPLAY NETWORK (반응형 디스플레이 광고)
+  // ═══════════════════════════════════════════════════
+  {
+    mediaName: 'Google Display Network',
+    mediaAliases: ['GDN', '구글 디스플레이', '구글 GDN', 'Google Display', 'Google GDN'],
+    products: [
+      {
+        // 출처: Google Ads 고객센터 "반응형 디스플레이 광고를 위한 권장사항 가이드"
+        // (support.google.com/google-ads/answer/9823397, 26.8.21)
+        //
+        // 받은 페이지는 이미지 가이드라인(1~6/21p)까지다. 로고·텍스트(제목/설명
+        // 글자 수)·자동 생성 동영상 섹션은 뒤쪽 페이지에 있어 이 문서에 없다.
+        // 값을 추측해 넣으면 디자이너가 잘못된 규격으로 제작하게 되므로, 이미지
+        // 규격만 반영하고 나머지는 "확인 필요"로 남긴다.
+        name: '반응형 디스플레이 광고',
+        aliases: ['Responsive Display Ad', 'RDA', '반응형 디스플레이', 'GDN 반응형'],
+        areas: [
+          { displayOrder: 1, areaName: '이미지 — 가로형', areaType: 'IMAGE', widthPx: 1200, heightPx: 628, ratio: '1.91:1', maxFileSizeKb: 5120, specLabel: '1200 × 628 px 권장 (최소 600 × 314 px) / 1.91:1 / 최대 5,120KB', notes: '가로세로 비율당 이미지 5~10개 권장 / 최소 1개 필수', isUserInput: false },
+          { displayOrder: 2, areaName: '이미지 — 정사각형', areaType: 'IMAGE', widthPx: 1200, heightPx: 1200, ratio: '1:1', maxFileSizeKb: 5120, specLabel: '1200 × 1200 px 권장 (최소 300 × 300 px) / 1:1 / 최대 5,120KB', notes: '가로세로 비율당 이미지 5~10개 권장 / 최소 1개 필수', isUserInput: false },
+          { displayOrder: 3, areaName: '이미지 — 세로형', areaType: 'IMAGE', widthPx: 900, heightPx: 1600, ratio: '9:16', maxFileSizeKb: 5120, specLabel: '900 × 1600 px 권장 (최소 600 × 1067 px) / 9:16 / 최대 5,120KB', notes: '가로세로 비율당 이미지 5~10개 권장 / 필수 아님 (최소 0개)', isUserInput: false },
+          { displayOrder: 4, areaName: '이미지 매수', areaType: 'TEXT', specLabel: '3개 비율 합산 최대 15개', isUserInput: true },
+          { displayOrder: 5, areaName: '로고', areaType: 'IMAGE', specLabel: null, notes: '가이드의 로고 규격 페이지가 이 자료에 없다 — 확인 필요', isUserInput: true },
+          { displayOrder: 6, areaName: '광고 제목', areaType: 'TEXT', specLabel: null, notes: '가이드의 텍스트 글자 수 페이지가 이 자료에 없다 — 확인 필요', isUserInput: true },
+          { displayOrder: 7, areaName: '설명', areaType: 'TEXT', specLabel: null, notes: '가이드의 텍스트 글자 수 페이지가 이 자료에 없다 — 확인 필요', isUserInput: true },
+          { displayOrder: 8, areaName: '최종 도착 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+        ],
+      },
+    ],
+  },
+
+  // ═══════════════════════════════════════════════════
   // NAVER WEBTOON
   // ═══════════════════════════════════════════════════
   {
