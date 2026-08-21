@@ -42,6 +42,10 @@ export interface WorkItem {
   matchScore: number;
   /** 소재 전달 기한 */
   deadline?: string;
+  /** 라이브 일정 */
+  liveSchedule?: string;
+  /** 원본 엑셀 행 번호 — 사용자가 엑셀에서 대조할 수 있게 */
+  excelRow?: number;
   /** 영역별 확정값. key 는 area.displayOrder */
   values: Record<number, AreaValue>;
   done: boolean;

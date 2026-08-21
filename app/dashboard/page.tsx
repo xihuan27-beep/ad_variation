@@ -4,8 +4,8 @@ import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Check, Download, FileSpreadsheet, Upload, AlertTriangle } from 'lucide-react';
 
-import { getAllEntries, fixedSpecAreas, userInputAreas, matchSpec } from '@/lib/spec-db';
-import type { SpecEntry } from '@/lib/spec-db';
+import { fixedSpecAreas, userInputAreas, matchSpec, LOW_CONFIDENCE_SCORE } from '@/lib/spec-db';
+import { parseMediaPlan, type MediaPlanRow } from '@/lib/media-plan';
 import {
   isItemComplete,
   progressOf,
@@ -18,27 +18,16 @@ import InputPanel from '@/components/work/InputPanel';
 
 type Screen = 'upload' | 'work' | 'review';
 
-/**
- * 엑셀 파싱이 붙기 전까지 쓰는 시연용 매체 구성.
- * 실제 매칭 로직(matchSpec)을 그대로 통과시켜 DB 연결 결과를 보여준다.
- */
-const DEMO_ROWS: Array<{ media: string; product: string; deadline: string }> = [
-  { media: '네이버 GFA', product: '스마트채널', deadline: '8/14 (목) 17:00' },
-  { media: '네이버 GFA', product: '배너 이미지형', deadline: '8/16 (토) 17:00' },
-  { media: '네이버 웹툰', product: '빅배너', deadline: '8/19 (화) 17:00' },
-  { media: '유튜브', product: 'VRC 2.0', deadline: '8/21 (목) 17:00' },
-  { media: '카카오모먼트', product: '비즈보드', deadline: '8/22 (금) 17:00' },
-];
-
 const INITIAL_META: CampaignMeta = {
   brand: 'Diageo JW Blue',
   mainCopy: 'Keep Walking. 더 나아가라',
   assets: { mainVisual: '메인 비주얼', subVisual: '2nd 비주얼', logo: 'JW 로고' },
 };
 
-function buildItems(meta: CampaignMeta): WorkItem[] {
-  return DEMO_ROWS.map((row) => {
-    const match = matchSpec(row.media, row.product);
+/** 엑셀에서 읽은 집행 건을 마스터 DB에 연결해 작업 항목으로 만든다 */
+function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
+  return rows.map((row) => {
+    const match = matchSpec(row.mediaName, row.productName);
     const entry = match?.entry ?? null;
     const values: WorkItem['values'] = {};
 
@@ -49,11 +38,13 @@ function buildItems(meta: CampaignMeta): WorkItem[] {
     }
 
     return {
-      rawMediaName: row.media,
-      rawProductName: row.product,
+      rawMediaName: row.mediaName,
+      rawProductName: row.productName,
       entry,
       matchScore: match?.score ?? 0,
-      deadline: row.deadline,
+      deadline: row.assetDeadline,
+      liveSchedule: row.liveSchedule,
+      excelRow: row.excelRow,
       values,
       done: false,
     };
@@ -62,19 +53,40 @@ function buildItems(meta: CampaignMeta): WorkItem[] {
 
 export default function DashboardPage() {
   const [screen, setScreen] = useState<Screen>('upload');
-  const [meta] = useState<CampaignMeta>(INITIAL_META);
+  const [meta, setMeta] = useState<CampaignMeta>(INITIAL_META);
   const [items, setItems] = useState<WorkItem[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
+  const [parseError, setParseError] = useState<string | null>(null);
+  const [parsing, setParsing] = useState(false);
 
   const active = items[activeIdx];
   const progress = useMemo(() => progressOf(items), [items]);
   const isLast = activeIdx >= items.length - 1;
 
-  const start = useCallback(() => {
-    setItems(buildItems(meta));
-    setActiveIdx(0);
-    setScreen('work');
-  }, [meta]);
+  const handleFile = useCallback(
+    async (file: File) => {
+      setParsing(true);
+      setParseError(null);
+      try {
+        const rows = parseMediaPlan(await file.arrayBuffer());
+        if (rows.length === 0) {
+          setParseError(
+            '집행 매체 목록을 찾지 못했습니다. 매체·상품 열이 있는 시트가 포함된 기획 엑셀인지 확인해 주세요.'
+          );
+          return;
+        }
+        setMeta((m) => ({ ...m, fileName: file.name }));
+        setItems(buildItems(rows, meta));
+        setActiveIdx(0);
+        setScreen('work');
+      } catch (e) {
+        setParseError(`엑셀을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
+      } finally {
+        setParsing(false);
+      }
+    },
+    [meta]
+  );
 
   const updateActive = useCallback(
     (fn: (item: WorkItem) => WorkItem) => {
@@ -142,17 +154,29 @@ export default function DashboardPage() {
             매체 기획 엑셀과 캠페인 소재를 올리면, 매체별 제작 가이드를 만들어 드립니다.
           </p>
 
-          <div
-            className="mt-6 flex items-center gap-3 rounded-lg px-4 py-4"
+          <label
+            className="mt-6 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-4"
             style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-strong)' }}
           >
+            <input
+              type="file"
+              accept=".xlsx,.xls,.xlsm"
+              className="hidden"
+              disabled={parsing}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                // 같은 파일을 다시 고를 수 있도록 값을 비운다
+                e.target.value = '';
+                if (f) void handleFile(f);
+              }}
+            />
             <FileSpreadsheet size={20} style={{ color: 'var(--accent)' }} />
             <div className="min-w-0 flex-1">
               <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                매체 기획 엑셀
+                {parsing ? '엑셀을 읽는 중…' : '매체 기획 엑셀'}
               </div>
               <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>
-                집행 매체·상품·소재 전달 기한을 읽어옵니다
+                {meta.fileName ?? '집행 매체·상품·소재 전달 기한을 읽어옵니다'}
               </div>
             </div>
             <span
@@ -161,7 +185,17 @@ export default function DashboardPage() {
             >
               필수
             </span>
-          </div>
+          </label>
+
+          {parseError && (
+            <div
+              className="mt-3 flex items-start gap-2 rounded-lg px-4 py-3 text-[13px]"
+              style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+            >
+              <AlertTriangle size={15} className="mt-0.5 shrink-0" />
+              <span>{parseError}</span>
+            </div>
+          )}
 
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
@@ -185,15 +219,21 @@ export default function DashboardPage() {
             ))}
           </div>
 
-          <button
-            type="button"
-            onClick={start}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold"
-            style={{ background: 'var(--accent)', color: '#fff' }}
-          >
-            가이드 생성 시작
-            <ArrowRight size={16} />
-          </button>
+          <p className="mt-6 text-center text-[12px]" style={{ color: 'var(--text-muted)' }}>
+            엑셀을 선택하면 매체별 가이드 생성이 시작됩니다.
+          </p>
+
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setScreen('work')}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold"
+              style={{ background: 'var(--accent)', color: '#fff' }}
+            >
+              작업 화면으로 돌아가기
+              <ArrowRight size={16} />
+            </button>
+          )}
 
           <Link
             href="/"
@@ -236,11 +276,12 @@ export default function DashboardPage() {
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {it.entry ? it.entry.productName : `${it.rawMediaName} ${it.rawProductName}`}
+                      {it.rawProductName || it.rawMediaName}
                     </div>
                     <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>
-                      {it.entry ? it.entry.mediaName : 'DB에서 매칭되는 상품을 찾지 못했습니다'}
+                      {it.rawMediaName}
                       {it.deadline ? ` · ${it.deadline}` : ''}
+                      {it.entry ? ` · 적용 규격 ${it.entry.productName}` : ' · DB에서 매칭되는 상품을 찾지 못했습니다'}
                     </div>
                   </div>
                   <button
@@ -357,12 +398,23 @@ export default function DashboardPage() {
                         fontWeight: isActive ? 600 : 400,
                       }}
                     >
-                      {it.entry ? it.entry.productName : it.rawProductName}
+                      {/* 엑셀에 적힌 이름으로 보여줘야 담당자가 자기 기획안과 대조할 수 있다.
+                          매칭된 DB 상품명을 쓰면 서로 다른 행이 같은 이름으로 겹쳐 구분되지 않는다. */}
+                      {it.rawProductName || it.rawMediaName}
                     </span>
-                    <span className="block text-[10px]" style={{ color: 'var(--text-muted)' }}>
-                      {it.deadline}
+                    <span className="block truncate text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                      {it.rawMediaName}
+                      {it.deadline ? ` · ${it.deadline}` : ''}
                     </span>
                   </span>
+                  {!it.entry && (
+                    <span
+                      className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                      style={{ background: 'var(--warn-muted)', color: 'var(--warn)' }}
+                    >
+                      미매칭
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -409,15 +461,27 @@ export default function DashboardPage() {
         {/* 3번 컬럼: 선택·입력 항목 */}
         <section className="grid min-h-0 min-w-0 flex-1 grid-rows-[auto_1fr_auto] overflow-hidden">
           <div className="px-6 py-3.5" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+            {/* 제목은 엑셀 표기 — 담당자가 기획안에서 찾는 이름이다 */}
             <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
-              {active?.entry ? active.entry.productName : `${active?.rawMediaName} ${active?.rawProductName}`}
+              {active?.rawProductName || active?.rawMediaName}
             </h2>
             <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[12px]" style={{ color: 'var(--text-secondary)' }}>
               <span>
-                {active?.entry?.mediaName ?? 'DB 미매칭'}
+                {active?.rawMediaName}
                 {active?.deadline ? ` · 소재 전달 기한 ${active.deadline}` : ''}
+                {active?.liveSchedule ? ` · 라이브 ${active.liveSchedule}` : ''}
               </span>
-              {active?.entry && active.matchScore < 0.6 && (
+              {active?.entry && (
+                // 어떤 DB 규격이 적용됐는지 밝힌다 — 엑셀 표기와 다를 수 있다
+                <span
+                  className="rounded px-2 py-0.5 text-[11px]"
+                  style={{ background: 'var(--bg-elevated)', color: 'var(--text-secondary)' }}
+                  title={`${active.entry.mediaName} / ${active.entry.productName}`}
+                >
+                  적용 규격: {active.entry.productName}
+                </span>
+              )}
+              {active?.entry && active.matchScore < LOW_CONFIDENCE_SCORE && (
                 <span
                   className="rounded px-2 py-0.5 text-[11px] font-semibold"
                   style={{ background: 'var(--warn-muted)', color: 'var(--warn)' }}

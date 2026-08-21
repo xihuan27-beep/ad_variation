@@ -94,10 +94,44 @@ const mediaFuse = new Fuse(MEDIA_KEYS, {
     { name: 'mediaName', weight: 0.5 },
     { name: 'aliases', weight: 0.5 },
   ],
-  threshold: 0.5,
+  threshold: 0.35,
   ignoreLocation: true,
   includeScore: true,
 });
+
+/** 공백·기호를 지우고 소문자로 — "NaverGFA" 와 "Naver GFA" 를 같게 본다 */
+function normKey(s: string): string {
+  return s.toLowerCase().replace(/[\s_\-·/()]+/g, '');
+}
+
+/** 정규화 완전일치용 사전. 매체명과 모든 별칭을 담는다. */
+const MEDIA_EXACT = new Map<string, string>();
+for (const m of MEDIA_KEYS) {
+  MEDIA_EXACT.set(normKey(m.mediaName), m.mediaName);
+  for (const a of m.aliases) MEDIA_EXACT.set(normKey(a), m.mediaName);
+}
+
+/**
+ * 퍼지 매체 해석을 받아들이는 최소 점수.
+ * 짧은 표기는 bitap 매칭이 쉽게 오작동하므로 (예: "OOH" ↔ "Webtoon" 이 0.77)
+ * 오탈자 교정 용도로만 남기고 기준을 높게 잡는다.
+ */
+const MIN_MEDIA_SCORE = 0.85;
+
+/** 정규화 후 한쪽이 다른 쪽을 포함하면 같은 매체로 본다 ("GFA" → "Naver GFA") */
+function containmentMatch(q: string): string | null {
+  const nq = normKey(q);
+  if (nq.length < 2) return null;
+
+  let best: { name: string; diff: number } | null = null;
+  for (const [key, name] of MEDIA_EXACT) {
+    if (key.length < 2) continue;
+    if (!key.includes(nq) && !nq.includes(key)) continue;
+    const diff = Math.abs(key.length - nq.length);
+    if (!best || diff < best.diff) best = { name, diff };
+  }
+  return best ? best.name : null;
+}
 
 const globalProductFuse = new Fuse(ENTRIES, PRODUCT_OPTS);
 
@@ -128,12 +162,35 @@ export interface SpecMatch {
   score: number;
 }
 
-/** 엑셀에 적힌 매체 표기를 정식 매체명으로 해석한다. */
+/**
+ * 매체를 특정하지 못한 채 DB 전체에서 찾은 결과를 받아들이는 최소 점수.
+ * 이보다 낮으면 매칭 실패로 처리한다.
+ */
+const MIN_CROSS_MEDIA_SCORE = 0.5;
+
+/** 이 점수 미만이면 화면에서 "확인 필요"로 표시한다 */
+export const LOW_CONFIDENCE_SCORE = 0.6;
+
+/**
+ * 엑셀에 적힌 매체 표기를 정식 매체명으로 해석한다.
+ *
+ * 정규화 완전일치를 먼저 본다. 짧은 매체 표기는 퍼지 매칭이 쉽게 오작동하는데
+ * (예: "OOH" 가 "Webtoon" 에 높은 점수로 붙는다), 실제 표기는 대개 표기 흔들림
+ * 수준이라 완전일치로 대부분 해결된다. 퍼지는 그 다음의 보조 수단이다.
+ */
 export function resolveMedia(mediaName: string): string | null {
   const q = mediaName.trim();
   if (!q) return null;
+
+  const exact = MEDIA_EXACT.get(normKey(q));
+  if (exact) return exact;
+
+  const contained = containmentMatch(q);
+  if (contained) return contained;
+
   const [best] = mediaFuse.search(q, { limit: 1 });
-  return best ? best.item.mediaName : null;
+  if (!best) return null;
+  return 1 - (best.score ?? 1) >= MIN_MEDIA_SCORE ? best.item.mediaName : null;
 }
 
 /**
@@ -164,11 +221,16 @@ export function matchSpec(mediaName: string, productName?: string): SpecMatch | 
     return entry ? { entry, score: 0.2 } : null;
   }
 
-  // 매체 해석에 실패한 경우에만 전체에서 상품명으로 찾는다
+  // 매체 해석에 실패한 경우에만 전체에서 상품명으로 찾는다.
+  // 이 경로는 DB 전체를 뒤지는 추측이므로 기준을 높게 잡는다. 근거가 약한 결과를
+  // 돌려주면 DB에 아예 없는 매체(예: OOH)에 엉뚱한 매체의 규격이 붙어,
+  // 매칭 실패보다 훨씬 위험하다.
   const fallbackQuery = product || mediaName.trim();
   if (!fallbackQuery) return null;
   const [best] = globalProductFuse.search(fallbackQuery, { limit: 1 });
-  return best ? { entry: best.item, score: (1 - (best.score ?? 1)) * 0.8 } : null;
+  if (!best) return null;
+  const score = (1 - (best.score ?? 1)) * 0.8;
+  return score >= MIN_CROSS_MEDIA_SCORE ? { entry: best.item, score } : null;
 }
 
 export function matchSpecAll(mediaName: string, productName?: string, limit = 5): SpecMatch[] {
