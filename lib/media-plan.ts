@@ -27,6 +27,8 @@ export interface MediaPlanRow {
   note?: string;
   /** 소재 유형 표기 (Video / Image 등) — 같은 지면의 영상·이미지 규격을 가르는 데 쓴다 */
   unit?: string;
+  /** 행 전체 셀을 이어붙인 원문 — 이름 매칭이 실패했을 때 스펙 숫자를 뽑는 재료 */
+  rawText: string;
   sheetName: string;
   /** 원본 엑셀 행 번호 (1-based) — 사용자가 엑셀에서 찾아보게 하려면 필요 */
   excelRow: number;
@@ -163,6 +165,8 @@ function parseSheet(sheetName: string, rows: unknown[][]): MediaPlanRow[] {
       assetDeadline: lastDeadline || undefined,
       note: noteCol >= 0 ? norm(row[noteCol]) || undefined : undefined,
       unit: unitCol >= 0 ? lastUnit || undefined : undefined,
+      // 인식하지 못한 열(예: 별도 "해상도" 컬럼)에 스펙이 적혀 있을 수 있어 행 전체를 담는다
+      rawText: row.map((c) => norm(c)).filter(Boolean).join(' '),
       sheetName,
       excelRow: i + 1,
     });

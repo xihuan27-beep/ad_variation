@@ -13,7 +13,8 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 
-import { fixedSpecAreas, userInputAreas, matchSpec, LOW_CONFIDENCE_SCORE } from '@/lib/spec-db';
+import { fixedSpecAreas, userInputAreas, matchSpec, findSpecDiscrepancies, LOW_CONFIDENCE_SCORE } from '@/lib/spec-db';
+import { extractSpecTokens } from '@/lib/spec-extract';
 import { parseMediaPlan, type MediaPlanRow } from '@/lib/media-plan';
 import {
   isItemComplete,
@@ -55,7 +56,7 @@ function readAsDataUrl(file: File): Promise<string> {
 /** 엑셀에서 읽은 집행 건을 마스터 DB에 연결해 작업 항목으로 만든다 */
 function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
   return rows.map((row) => {
-    const match = matchSpec(row.mediaName, row.productName, row.unit);
+    const match = matchSpec(row.mediaName, row.productName, row.unit, row.rawText);
     const entry = match?.entry ?? null;
     const values: WorkItem['values'] = {};
 
@@ -70,6 +71,10 @@ function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
       rawProductName: row.productName,
       entry,
       matchScore: match?.score ?? 0,
+      matchedBy: match?.matchedBy,
+      // 매칭은 됐어도 엑셀에 적힌 규격 숫자가 DB와 다를 수 있다 — 매체명/상품명이
+      // 이름으로는 맞는데 실제 규격이 개정된 경우를 잡아낸다.
+      specDiscrepancies: entry ? findSpecDiscrepancies(entry, extractSpecTokens(row.rawText)) : undefined,
       deadline: row.assetDeadline,
       liveSchedule: row.liveSchedule,
       excelRow: row.excelRow,
@@ -364,7 +369,16 @@ export default function DashboardPage() {
                   className="flex items-center gap-4 px-5 py-4"
                   style={{ borderBottom: '1px solid var(--border-subtle)' }}
                 >
-                  <span style={{ color: complete ? 'var(--success)' : 'var(--warn)' }}>
+                  <span
+                    style={{
+                      color:
+                        it.specDiscrepancies && it.specDiscrepancies.length > 0
+                          ? 'var(--danger)'
+                          : complete
+                            ? 'var(--success)'
+                            : 'var(--warn)',
+                    }}
+                  >
                     {complete ? <Check size={18} /> : <AlertTriangle size={18} />}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -374,8 +388,15 @@ export default function DashboardPage() {
                     <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>
                       {it.rawMediaName}
                       {it.deadline ? ` · ${it.deadline}` : ''}
-                      {it.entry ? ` · 적용 규격 ${it.entry.productName}` : ' · DB에서 매칭되는 상품을 찾지 못했습니다'}
+                      {it.entry
+                        ? ` · 적용 규격 ${it.entry.productName}${it.matchedBy === 'spec' ? ' (이름이 아닌 규격으로 찾음)' : ''}`
+                        : ' · DB에서 매칭되는 상품을 찾지 못했습니다'}
                     </div>
+                    {it.specDiscrepancies && it.specDiscrepancies.length > 0 && (
+                      <div className="mt-0.5 text-[12px]" style={{ color: 'var(--danger)' }}>
+                        ⚠ 규격 불일치 — {it.specDiscrepancies.map((d) => d.fieldLabel).join(', ')} 확인 필요
+                      </div>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -520,6 +541,15 @@ export default function DashboardPage() {
                       미매칭
                     </span>
                   )}
+                  {it.entry && it.specDiscrepancies && it.specDiscrepancies.length > 0 && (
+                    <span
+                      className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                      style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+                      title="엑셀에 적힌 규격이 DB와 다릅니다"
+                    >
+                      규격 불일치
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -594,7 +624,16 @@ export default function DashboardPage() {
                   적용 규격: {active.entry.productName}
                 </span>
               )}
-              {active?.entry && active.matchScore < LOW_CONFIDENCE_SCORE && (
+              {active?.entry && active.matchedBy === 'spec' && (
+                <span
+                  className="rounded px-2 py-0.5 text-[11px] font-semibold"
+                  style={{ background: 'var(--accent-muted)', color: 'var(--accent)' }}
+                  title="엑셀 상품명이 DB와 달라 이름 대신 규격(크기·용량 등) 숫자로 찾았습니다. 매체 자체가 맞는지 한 번 확인해 주세요."
+                >
+                  규격 일치로 자동 연결됨
+                </span>
+              )}
+              {active?.entry && !active.matchedBy && active.matchScore < LOW_CONFIDENCE_SCORE && (
                 <span
                   className="rounded px-2 py-0.5 text-[11px] font-semibold"
                   style={{ background: 'var(--warn-muted)', color: 'var(--warn)' }}
@@ -617,6 +656,26 @@ export default function DashboardPage() {
               </div>
             ) : (
               <>
+                {active.specDiscrepancies && active.specDiscrepancies.length > 0 && (
+                  <div
+                    className="shrink-0 rounded-lg p-4 text-[13px]"
+                    style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+                  >
+                    <p className="font-semibold">
+                      엑셀에 적힌 규격이 DB와 다릅니다 — 매체사 규격이 바뀌었을 수 있습니다
+                    </p>
+                    <ul className="mt-1.5 space-y-0.5">
+                      {active.specDiscrepancies.map((d) => (
+                        <li key={d.field}>
+                          · {d.fieldLabel}: 엑셀 {d.excelValue} / DB {d.dbValue}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-2 text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+                      최신 매체사 제작 가이드를 다시 확인해, 필요하면 DB 값을 갱신해 주세요.
+                    </p>
+                  </div>
+                )}
                 <section
                   className="shrink-0 overflow-hidden rounded-lg"
                   style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}

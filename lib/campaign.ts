@@ -5,7 +5,8 @@
  * 입력값을 담는다. 실제 저장소가 붙기 전까지는 클라이언트 메모리에만 존재한다.
  */
 
-import type { AssetArea, SpecEntry } from './spec-db';
+import type { AssetArea, SpecEntry, SpecDiscrepancy } from './spec-db';
+export type { SpecDiscrepancy } from './spec-db';
 
 /** 업로드된 소재 파일. 미리보기와 PPT 생성 양쪽에 이 dataUrl 을 그대로 쓴다. */
 export interface UploadedAsset {
@@ -72,6 +73,10 @@ export interface WorkItem {
   /** 마스터 DB 매칭 결과 — 실패하면 null */
   entry: SpecEntry | null;
   matchScore: number;
+  /** 'spec' 이면 이름이 아니라 규격 숫자로 찾았다는 뜻 */
+  matchedBy?: 'spec';
+  /** 엑셀 원문의 규격 숫자가 매칭된 상품의 DB 값과 다를 때 채워진다 */
+  specDiscrepancies?: SpecDiscrepancy[];
   /** 소재 전달 기한 */
   deadline?: string;
   /** 라이브 일정 */

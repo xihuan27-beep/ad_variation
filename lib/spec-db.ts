@@ -9,6 +9,7 @@ import Fuse from 'fuse.js';
 import { MEDIA_DATA } from './spec-data';
 import type { AssetArea, AssetAreaType } from './spec-data';
 import { META_PLACEMENT_PRODUCTS } from './meta-specs.generated';
+import { extractSpecTokens, hasAnyToken, type SpecTokens } from './spec-extract';
 
 export type { AssetArea, AssetAreaType };
 
@@ -171,6 +172,8 @@ export interface SpecMatch {
   entry: SpecEntry;
   /** 0~1, 높을수록 정확한 매칭 */
   score: number;
+  /** 'spec' 이면 이름이 아니라 규격 숫자로 찾았다는 뜻 — 화면에 다르게 표시해야 한다 */
+  matchedBy?: 'spec';
 }
 
 /**
@@ -284,6 +287,110 @@ const FORMAT_PREFERENCE_MARGIN = 0.25;
 /** 이 점수 미만이면 화면에서 "확인 필요"로 표시한다 */
 export const LOW_CONFIDENCE_SCORE = 0.6;
 
+/** area.ratio 는 "9:16~1:1" 처럼 여러 비율을 담을 수 있어 개별 토큰으로 쪼갠다 */
+function ratioTokensOf(s?: string): string[] {
+  return s?.match(/\d+(?:\.\d+)?:\d+(?:\.\d+)?/g) ?? [];
+}
+
+/** 엑셀에서 뽑은 토큰이 전부 이 영역 하나에서 성립하는지 본다 (AND) */
+function areaMatchesTokens(area: AssetArea, tokens: SpecTokens): boolean {
+  if (tokens.widthPx && tokens.heightPx) {
+    if (area.widthPx !== tokens.widthPx || area.heightPx !== tokens.heightPx) return false;
+  }
+  if (tokens.ratio && !ratioTokensOf(area.ratio).includes(tokens.ratio)) return false;
+  if (tokens.maxFileSizeKb && area.maxFileSizeKb !== tokens.maxFileSizeKb) return false;
+  if (tokens.maxDurationSec && area.maxDurationSec !== tokens.maxDurationSec) return false;
+  return true;
+}
+
+/**
+ * 이름 매칭이 완전히 실패했을 때, 엑셀 원문에 적힌 규격 숫자로 상품을 다시 찾는다.
+ *
+ * 반드시 이미 확인된 매체 안에서만 찾는다 — 매체까지 모르는 상태에서 전체 DB를
+ * 스펙으로 뒤지면 "1080×1080"·"1:1" 같은 흔한 값이 수십 개 상품과 동시에 맞아
+ * 떨어져 위험하다. 그리고 후보가 정확히 하나일 때만 결과를 준다. 여러 상품이
+ * 같은 스펙을 쓰면 자신 있게 틀린 답을 주는 셈이라, 그럴 땐 못 찾은 것으로
+ * 취급하고 "확인 필요"로 남긴다.
+ */
+export function matchBySpec(media: string, tokens: SpecTokens): SpecMatch | null {
+  if (!hasAnyToken(tokens)) return null;
+
+  const candidates = new Set<SpecEntry>();
+  for (const entry of ENTRIES) {
+    if (entry.mediaName !== media) continue;
+    if (entry.areas.some((a) => areaMatchesTokens(a, tokens))) candidates.add(entry);
+  }
+
+  if (candidates.size !== 1) return null;
+  const [entry] = candidates;
+  return { entry, score: 1, matchedBy: 'spec' };
+}
+
+export interface SpecDiscrepancy {
+  field: 'size' | 'ratio' | 'fileSize' | 'duration';
+  fieldLabel: string;
+  excelValue: string;
+  dbValue: string;
+}
+
+/**
+ * 엑셀 원문에 적힌 규격이 이미 확정된 상품(entry)의 어느 고정 규격 영역과도
+ * 맞지 않으면 구체적으로 무엇이 다른지 돌려준다.
+ *
+ * 상품 안에 영역이 여러 개(9:16 동영상, 정지컷, 로고 등)라 "다르다"고 바로
+ * 말할 수 없다 — 엑셀이 그 중 어느 영역을 가리키는지 모르기 때문이다. 그래서
+ * 제공된 항목이 가장 많이 일치하는 영역을 "이 행이 말하는 영역"으로 추정하고,
+ * 그 영역과 어긋나는 항목만 짚어 준다. 애초에 일치하는 영역이 하나라도 있으면
+ * 불일치가 아니다.
+ */
+export function findSpecDiscrepancies(entry: SpecEntry, tokens: SpecTokens): SpecDiscrepancy[] {
+  if (!hasAnyToken(tokens)) return [];
+  const areas = fixedSpecAreas(entry);
+  if (areas.some((a) => areaMatchesTokens(a, tokens))) return [];
+
+  let best: { area: AssetArea; hits: number } | null = null;
+  for (const a of areas) {
+    let hits = 0;
+    if (tokens.widthPx && tokens.heightPx && a.widthPx === tokens.widthPx && a.heightPx === tokens.heightPx) hits++;
+    if (tokens.ratio && ratioTokensOf(a.ratio).includes(tokens.ratio)) hits++;
+    if (tokens.maxFileSizeKb && a.maxFileSizeKb === tokens.maxFileSizeKb) hits++;
+    if (tokens.maxDurationSec && a.maxDurationSec === tokens.maxDurationSec) hits++;
+    if (!best || hits > best.hits) best = { area: a, hits };
+  }
+  if (!best) return [];
+
+  const a = best.area;
+  const out: SpecDiscrepancy[] = [];
+  if (tokens.widthPx && tokens.heightPx && (a.widthPx !== tokens.widthPx || a.heightPx !== tokens.heightPx)) {
+    out.push({
+      field: 'size',
+      fieldLabel: '해상도',
+      excelValue: `${tokens.widthPx} × ${tokens.heightPx} px`,
+      dbValue: a.widthPx && a.heightPx ? `${a.widthPx} × ${a.heightPx} px` : '규격 없음',
+    });
+  }
+  if (tokens.ratio && !ratioTokensOf(a.ratio).includes(tokens.ratio)) {
+    out.push({ field: 'ratio', fieldLabel: '비율', excelValue: tokens.ratio, dbValue: a.ratio ?? '규격 없음' });
+  }
+  if (tokens.maxFileSizeKb && a.maxFileSizeKb !== tokens.maxFileSizeKb) {
+    out.push({
+      field: 'fileSize',
+      fieldLabel: '파일 용량',
+      excelValue: `${tokens.maxFileSizeKb}KB`,
+      dbValue: a.maxFileSizeKb ? `${a.maxFileSizeKb}KB` : '규격 없음',
+    });
+  }
+  if (tokens.maxDurationSec && a.maxDurationSec !== tokens.maxDurationSec) {
+    out.push({
+      field: 'duration',
+      fieldLabel: '재생 시간',
+      excelValue: `${tokens.maxDurationSec}초`,
+      dbValue: a.maxDurationSec ? `${a.maxDurationSec}초` : '규격 없음',
+    });
+  }
+  return out;
+}
+
 /**
  * 엑셀에 적힌 매체 표기를 정식 매체명으로 해석한다.
  *
@@ -313,7 +420,7 @@ export function resolveMedia(mediaName: string): string | null {
  * ("네이버 GFA 스마트채널" → 매칭 실패) 정확도가 떨어진다. 엑셀이 매체·상품을
  * 별도 컬럼으로 갖는 구조를 그대로 살려, 매체로 후보를 좁힌 뒤 상품을 매칭한다.
  */
-export function matchSpec(mediaName: string, productName?: string, unit?: string): SpecMatch | null {
+export function matchSpec(mediaName: string, productName?: string, unit?: string, rawText?: string): SpecMatch | null {
   const media = resolveMedia(mediaName);
   const product = productName?.trim();
 
@@ -331,6 +438,13 @@ export function matchSpec(mediaName: string, productName?: string, unit?: string
 
     const loose = preferUnit(rank(looseProductFuseFor(media), variants), unit, product);
     if (loose) return { entry: loose.entry, score: loose.score * 0.5 };
+
+    // 이름으로 전혀 못 찾았다 — 매체사마다 표기가 달라서일 수 있으니, 엑셀 원문에
+    // 규격 숫자가 있으면 그걸로 유일하게 특정되는 상품이 있는지 마지막으로 시도한다.
+    if (rawText) {
+      const spec = matchBySpec(media, extractSpecTokens(rawText));
+      if (spec) return spec;
+    }
 
     const entry = ENTRIES.find((e) => e.mediaName === media);
     return entry ? { entry, score: 0.2 } : null;
