@@ -2,27 +2,55 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ArrowRight, Check, Download, FileSpreadsheet, Upload, AlertTriangle } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Download,
+  FileSpreadsheet,
+  Loader2,
+  Upload,
+  AlertTriangle,
+} from 'lucide-react';
 
 import { fixedSpecAreas, userInputAreas, matchSpec, LOW_CONFIDENCE_SCORE } from '@/lib/spec-db';
 import { parseMediaPlan, type MediaPlanRow } from '@/lib/media-plan';
 import {
   isItemComplete,
   progressOf,
-  suggestValue,
+  suggestedAssetFor,
+  suggestInitial,
+  type AssetKey,
   type CampaignMeta,
+  type UploadedAsset,
   type WorkItem,
 } from '@/lib/campaign';
 import SpecTable from '@/components/work/SpecTable';
 import InputPanel from '@/components/work/InputPanel';
+import RatioBox from '@/components/work/RatioBox';
 
 type Screen = 'upload' | 'work' | 'review';
 
 const INITIAL_META: CampaignMeta = {
   brand: 'Diageo JW Blue',
   mainCopy: 'Keep Walking. 더 나아가라',
-  assets: { mainVisual: '메인 비주얼', subVisual: '2nd 비주얼', logo: 'JW 로고' },
+  assets: {},
 };
+
+const ASSET_SLOTS: Array<{ key: AssetKey; label: string; required: boolean }> = [
+  { key: 'mainVisual', label: '메인 비주얼', required: true },
+  { key: 'subVisual', label: '2nd 비주얼', required: false },
+  { key: 'logo', label: '브랜드 로고', required: false },
+];
+
+function readAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error ?? new Error('파일을 읽지 못했습니다'));
+    reader.readAsDataURL(file);
+  });
+}
 
 /** 엑셀에서 읽은 집행 건을 마스터 DB에 연결해 작업 항목으로 만든다 */
 function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
@@ -33,7 +61,7 @@ function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
 
     if (entry) {
       for (const area of userInputAreas(entry)) {
-        values[area.displayOrder] = { value: suggestValue(area, meta), confirmed: false };
+        values[area.displayOrder] = { ...suggestInitial(area, meta), confirmed: false };
       }
     }
 
@@ -58,10 +86,51 @@ export default function DashboardPage() {
   const [activeIdx, setActiveIdx] = useState(0);
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
+  const [pptError, setPptError] = useState<string | null>(null);
+  const [downloadingPpt, setDownloadingPpt] = useState(false);
 
   const active = items[activeIdx];
   const progress = useMemo(() => progressOf(items), [items]);
   const isLast = activeIdx >= items.length - 1;
+
+  const handleAssetUpload = useCallback(async (key: AssetKey, file: File) => {
+    try {
+      const dataUrl = await readAsDataUrl(file);
+      const asset: UploadedAsset = { name: file.name, dataUrl };
+      setMeta((m) => ({ ...m, assets: { ...m.assets, [key]: asset } }));
+    } catch (e) {
+      setParseError(`소재 파일을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }, []);
+
+  const downloadPpt = useCallback(async () => {
+    setDownloadingPpt(true);
+    setPptError(null);
+    try {
+      const res = await fetch('/api/generate-ppt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ meta, items }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? 'PPT 생성에 실패했습니다.');
+
+      const bytes = Uint8Array.from(atob(body.pptBase64), (c) => c.charCodeAt(0));
+      const blob = new Blob([bytes], {
+        type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${meta.brand || '소재가이드'}_제작가이드.pptx`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setPptError(e instanceof Error ? e.message : 'PPT 생성 중 오류가 발생했습니다.');
+    } finally {
+      setDownloadingPpt(false);
+    }
+  }, [meta, items]);
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -125,7 +194,7 @@ export default function DashboardPage() {
       if (!sub) return;
       updateActive((it) => ({
         ...it,
-        values: { ...it.values, [order]: { value: sub, confirmed: false } },
+        values: { ...it.values, [order]: { value: sub.name, assetRef: 'subVisual', confirmed: false } },
       }));
     },
     [meta.assets.subVisual, updateActive]
@@ -198,25 +267,49 @@ export default function DashboardPage() {
           )}
 
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {[
-              { label: '메인 비주얼', required: true },
-              { label: '2nd 비주얼', required: false },
-              { label: '브랜드 로고', required: false },
-            ].map((a) => (
-              <div
-                key={a.label}
-                className="flex flex-col items-center gap-1.5 rounded-lg px-3 py-4"
-                style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-strong)' }}
-              >
-                <Upload size={16} style={{ color: 'var(--text-muted)' }} />
-                <div className="text-[13px]" style={{ color: 'var(--text-primary)' }}>
-                  {a.label}
-                </div>
-                <div className="text-[11px]" style={{ color: a.required ? 'var(--danger)' : 'var(--text-muted)' }}>
-                  {a.required ? '필수' : '선택'}
-                </div>
-              </div>
-            ))}
+            {ASSET_SLOTS.map((slot) => {
+              const asset = meta.assets[slot.key];
+              return (
+                <label
+                  key={slot.key}
+                  className="flex cursor-pointer flex-col items-center gap-1.5 rounded-lg px-3 py-4"
+                  style={{
+                    background: 'var(--bg-surface)',
+                    border: `1px dashed ${asset ? 'var(--success)' : 'var(--border-strong)'}`,
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      e.target.value = '';
+                      if (f) void handleAssetUpload(slot.key, f);
+                    }}
+                  />
+                  {asset ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- data URL 미리보기
+                    <img src={asset.dataUrl} alt={asset.name} className="h-10 w-10 rounded object-cover" />
+                  ) : (
+                    <Upload size={16} style={{ color: 'var(--text-muted)' }} />
+                  )}
+                  <div
+                    className="max-w-full truncate text-[13px]"
+                    style={{ color: 'var(--text-primary)' }}
+                    title={asset?.name}
+                  >
+                    {asset ? asset.name : slot.label}
+                  </div>
+                  <div
+                    className="text-[11px]"
+                    style={{ color: asset ? 'var(--success)' : slot.required ? 'var(--danger)' : 'var(--text-muted)' }}
+                  >
+                    {asset ? '업로드됨 · 변경하려면 클릭' : slot.required ? '필수' : '선택'}
+                  </div>
+                </label>
+              );
+            })}
           </div>
 
           <p className="mt-6 text-center text-[12px]" style={{ color: 'var(--text-muted)' }}>
@@ -300,6 +393,16 @@ export default function DashboardPage() {
             })}
           </div>
 
+          {pptError && (
+            <div
+              className="mt-4 flex items-start gap-2 rounded-lg px-4 py-3 text-[13px]"
+              style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+            >
+              <AlertTriangle size={15} className="mt-0.5 shrink-0" />
+              <span>{pptError}</span>
+            </div>
+          )}
+
           <div className="mt-6 flex items-center justify-between">
             <button
               type="button"
@@ -312,11 +415,13 @@ export default function DashboardPage() {
             </button>
             <button
               type="button"
-              className="flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold"
+              onClick={downloadPpt}
+              disabled={downloadingPpt}
+              className="flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold disabled:opacity-60"
               style={{ background: 'var(--success)', color: '#04231A' }}
             >
-              <Download size={16} />
-              PPT 다운로드
+              {downloadingPpt ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+              {downloadingPpt ? '생성 중…' : 'PPT 다운로드'}
             </button>
           </div>
         </div>
@@ -438,18 +543,26 @@ export default function DashboardPage() {
             {active?.entry &&
               fixedSpecAreas(active.entry)
                 .filter((a) => a.widthPx && a.heightPx)
-                .map((a) => (
-                  <div
-                    key={a.displayOrder}
-                    className="shrink-0 rounded-lg p-3"
-                    style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
-                  >
-                    <div className="mb-2 text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
-                      {a.areaName}
+                .map((a) => {
+                  const asset = suggestedAssetFor(a, meta);
+                  return (
+                    <div
+                      key={a.displayOrder}
+                      className="shrink-0 rounded-lg p-3"
+                      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
+                    >
+                      <div className="mb-2 text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
+                        {a.areaName}
+                      </div>
+                      <RatioBox width={a.widthPx} height={a.heightPx} maxW={180} maxH={120} src={asset?.dataUrl} />
+                      {!asset && a.areaType === 'IMAGE' && (
+                        <p className="mt-1.5 text-[11px]" style={{ color: 'var(--text-muted)' }}>
+                          업로드된 소재를 이 비율로 크롭한 미리보기입니다 — 소재를 올리면 표시됩니다
+                        </p>
+                      )}
                     </div>
-                    <RatioPreview width={a.widthPx!} height={a.heightPx!} />
-                  </div>
-                ))}
+                  );
+                })}
             {active?.entry && (
               <p className="shrink-0 text-[12px] leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                 {active.entry.mediaName} · {active.entry.productName} 지면에 노출됩니다.
@@ -595,29 +708,5 @@ export default function DashboardPage() {
         </section>
       </div>
     </main>
-  );
-}
-
-/** 집행 예시 컬럼에서 쓰는 축소 비율 박스 */
-function RatioPreview({ width, height }: { width: number; height: number }) {
-  const scale = Math.min(180 / width, 120 / height, 1);
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div
-        className="flex items-center justify-center rounded text-[11px]"
-        style={{
-          width: Math.max(Math.round(width * scale), 24),
-          height: Math.max(Math.round(height * scale), 16),
-          background: 'var(--accent-muted)',
-          border: '1px solid var(--border-strong)',
-          color: 'var(--text-primary)',
-        }}
-      >
-        {width}×{height}
-      </div>
-      <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
-        {width} × {height} px
-      </div>
-    </div>
   );
 }

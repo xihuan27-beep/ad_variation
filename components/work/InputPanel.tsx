@@ -3,7 +3,7 @@
 import { Check, Image as ImageIcon } from 'lucide-react';
 import { formatSpec } from '@/lib/spec-db';
 import type { AssetArea } from '@/lib/spec-db';
-import type { AreaValue, CampaignMeta } from '@/lib/campaign';
+import { resolveAsset, type AreaValue, type CampaignMeta } from '@/lib/campaign';
 import RatioBox from './RatioBox';
 
 interface Props {
@@ -33,6 +33,11 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
       {areas.map((a) => {
         const v = values[a.displayOrder] ?? { value: '', confirmed: false };
         const isVisual = a.areaType === 'IMAGE' || a.areaType === 'VIDEO';
+        const asset = resolveAsset(meta, v.assetRef);
+        // 동영상 영역은 이미지처럼 미리보기 크롭이 되지 않으므로 파일 존재 여부만 보여준다
+        const showImagePreview = a.areaType === 'IMAGE' && asset;
+
+        const canConfirm = isVisual ? !!asset : !!v.value.trim() && !(a.maxChars && v.value.length > a.maxChars);
 
         return (
           <div
@@ -59,10 +64,15 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
 
               {isVisual ? (
                 <div className="flex flex-col gap-2">
-                  {v.value ? (
+                  {asset ? (
                     <div className="flex items-center gap-3">
                       {a.widthPx && a.heightPx ? (
-                        <RatioBox width={a.widthPx} height={a.heightPx} caption={v.value} />
+                        <RatioBox
+                          width={a.widthPx}
+                          height={a.heightPx}
+                          src={showImagePreview ? asset.dataUrl : undefined}
+                          caption={asset.name}
+                        />
                       ) : (
                         // 치수가 정해지지 않은 영역(예: 이미지 내 삽입 로고)도
                         // 어떤 소재가 선택됐는지는 보여 줘야 한다
@@ -75,7 +85,7 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
                           }}
                         >
                           <ImageIcon size={14} />
-                          {v.value}
+                          {asset.name}
                         </span>
                       )}
                     </div>
@@ -88,9 +98,9 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
                       업로드된 비주얼이 없습니다
                     </div>
                   )}
-                  {a.widthPx && a.heightPx && v.value && (
+                  {a.widthPx && a.heightPx && asset && (
                     <div className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>
-                      {v.value} 기반 · {a.widthPx}×{a.heightPx} px 크롭 필요
+                      {asset.name} 기반 · {a.widthPx}×{a.heightPx} px 크롭 필요
                       {a.isTransparentBg ? ' · 투명배경 처리' : ''}
                     </div>
                   )}
@@ -138,7 +148,7 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
                 <button
                   type="button"
                   onClick={() => onConfirm(a.displayOrder)}
-                  disabled={!v.value.trim() || (!!a.maxChars && v.value.length > a.maxChars)}
+                  disabled={!canConfirm}
                   className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] font-medium disabled:cursor-not-allowed disabled:opacity-40"
                   style={{
                     background: v.confirmed ? 'var(--success-muted)' : 'transparent',
