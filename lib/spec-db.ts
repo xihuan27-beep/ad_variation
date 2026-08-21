@@ -8,6 +8,7 @@
 import Fuse from 'fuse.js';
 import { MEDIA_DATA } from './spec-data';
 import type { AssetArea, AssetAreaType } from './spec-data';
+import { META_PLACEMENT_PRODUCTS } from './meta-specs.generated';
 
 export type { AssetArea, AssetAreaType };
 
@@ -30,7 +31,17 @@ function makeId(mediaName: string, productName: string): string {
     .replace(/^-|-$/g, '');
 }
 
-const ENTRIES: SpecEntry[] = MEDIA_DATA.flatMap((media) =>
+/**
+ * Meta 게재위치별 규격은 가이드 PDF 에서 자동 생성한다 (lib/meta-specs.generated.ts).
+ * 손으로 옮기기에는 형식 × 게재위치 조합이 너무 많아 실수가 나기 쉽다.
+ */
+const WITH_GENERATED = MEDIA_DATA.map((media) =>
+  media.mediaName === 'Meta'
+    ? { ...media, products: [...media.products, ...META_PLACEMENT_PRODUCTS] }
+    : media
+);
+
+const ENTRIES: SpecEntry[] = WITH_GENERATED.flatMap((media) =>
   media.products.map((product) => ({
     id: makeId(media.mediaName, product.name),
     mediaName: media.mediaName,
