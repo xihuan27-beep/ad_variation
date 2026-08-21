@@ -5,7 +5,7 @@
  * 재생성: node tools/meta-extract.mjs <pdf...> > data/meta-specs.json
  *         node tools/build-meta-specs.mjs
  *
- * 게재위치 52건.
+ * 게재위치 57건.
  */
 
 import type { MediaProduct } from './spec-data';
@@ -340,6 +340,37 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         ],
       },
       {
+        name: "인지도 — 이미지 (Facebook 비즈니스 발견 피드)",
+        aliases: ["Facebook 비즈니스 발견 피드","Facebook Biz Disco Feed","FB 비즈니스 발견 피드","페이스북 비즈니스 발견 피드","FB Biz Disco Feed","페이스북 Biz Disco Feed","Facebook 비즈니스 발견 피드 이미지","Facebook Biz Disco Feed 이미지","FB 비즈니스 발견 피드 이미지","페이스북 비즈니스 발견 피드 이미지","FB Biz Disco Feed 이미지","페이스북 Biz Disco Feed 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1.91:1 / 1:1", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 1.91:1 / 1:1 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 최소 높이 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 27, specLabel: "27자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Facebook 릴스)",
+        aliases: ["Facebook 릴스","Facebook Reels","FB 릴스","페이스북 릴스","FB Reels","페이스북 Reels","Facebook 릴스 이미지","Facebook Reels 이미지","FB 릴스 이미지","페이스북 릴스 이미지","FB Reels 이미지","페이스북 Reels 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 2560, ratio: "9:16", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 2560 px 이상 / 9:16 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 최소 높이 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 55, specLabel: "55자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Facebook 릴스 오버레이)",
+        aliases: ["Facebook 릴스 오버레이","Facebook Reels Overlay","FB 릴스 오버레이","페이스북 릴스 오버레이","FB Reels Overlay","페이스북 Reels Overlay","Facebook 릴스 오버레이 이미지","Facebook Reels Overlay 이미지","FB 릴스 오버레이 이미지","페이스북 릴스 오버레이 이미지","FB Reels Overlay 이미지","페이스북 Reels Overlay 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1:1", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 1:1 / 최대 30MB / JPG, PNG", notes: "최소 너비 300px / 최소 높이 300px", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 60, specLabel: "60자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 10, specLabel: "10자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
         name: "인지도 — 이미지 (Facebook 피드)",
         aliases: ["Facebook 피드","Facebook Feed","FB 피드","페이스북 피드","FB Feed","페이스북 Feed","Facebook 피드 이미지","Facebook Feed 이미지","FB 피드 이미지","페이스북 피드 이미지","FB Feed 이미지","페이스북 Feed 이미지"],
         areas: [
@@ -370,8 +401,29 @@ export const META_PLACEMENT_PRODUCTS: MediaProduct[] = [
         ],
       },
       {
+        name: "인지도 — 이미지 (Facebook 검색 결과)",
+        aliases: ["Facebook 검색 결과","Facebook Search","FB 검색 결과","페이스북 검색 결과","FB Search","페이스북 Search","Facebook 검색 결과 이미지","Facebook Search 이미지","FB 검색 결과 이미지","페이스북 검색 결과 이미지","FB Search 이미지","페이스북 Search 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1080, heightPx: 1080, ratio: "1.91:1 / 1:1", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1080 × 1080 px 이상 / 1.91:1 / 1:1 / 최대 30MB / JPG, PNG", notes: "최소 너비 600px / 최소 높이 600px / 화면 비율 허용 범위 3%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "설명", areaType: "TEXT", maxChars: 30, specLabel: "30자 권장", isUserInput: true },
+        { displayOrder: 5, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
         name: "인지도 — 이미지 (Instagram 탐색 홈)",
         aliases: ["Instagram 탐색 홈","Instagram Explore Home","IG 탐색 홈","인스타그램 탐색 홈","IG Explore Home","인스타그램 Explore Home","Instagram 탐색 홈 이미지","Instagram Explore Home 이미지","IG 탐색 홈 이미지","인스타그램 탐색 홈 이미지","IG Explore Home 이미지","인스타그램 Explore Home 이미지"],
+        areas: [
+        { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 1800, ratio: "4:5", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1800 px 이상 / 4:5 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
+        { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
+        { displayOrder: 3, areaName: "제목", areaType: "TEXT", maxChars: 40, specLabel: "40자 권장", isUserInput: true },
+        { displayOrder: 4, areaName: "랜딩 URL", areaType: "URL", specLabel: null, isUserInput: true },
+        ],
+      },
+      {
+        name: "인지도 — 이미지 (Instagram 피드)",
+        aliases: ["Instagram 피드","Instagram Feed","IG 피드","인스타그램 피드","IG Feed","인스타그램 Feed","Instagram 피드 이미지","Instagram Feed 이미지","IG 피드 이미지","인스타그램 피드 이미지","IG Feed 이미지","인스타그램 Feed 이미지"],
         areas: [
         { displayOrder: 1, areaName: "이미지", areaType: "IMAGE", widthPx: 1440, heightPx: 1800, ratio: "4:5", maxFileSizeKb: 30720, formats: ["JPG","PNG"], specLabel: "1440 × 1800 px 이상 / 4:5 / 최대 30MB / JPG, PNG", notes: "최소 너비 500px / 화면 비율 허용 범위 1%", isUserInput: false },
         { displayOrder: 2, areaName: "기본 문구", areaType: "TEXT", maxChars: 125, specLabel: "125자 권장", isUserInput: true },
