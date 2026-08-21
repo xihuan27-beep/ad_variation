@@ -1364,6 +1364,63 @@ export const MEDIA_DATA: MediaEntry[] = [
           { displayOrder: 8, areaName: '설명 문구', areaType: 'TEXT', maxChars: 45, specLabel: '한글 45자', isUserInput: true },
         ],
       },
+
+      // ─────────────────────────────────────────────
+      // 아래 3개 형식의 동영상·썸네일·컴패니언 배너 규격은
+      // Google Ads 고객센터 "동영상 광고 사양에 대한 정보" (answer/13547298, 26.8.21) 기준.
+      //
+      // 해당 문서는 형식별 영상 길이와 텍스트 글자 수를 명시하지 않고
+      // 형식별 페이지로 안내한다. 따라서 길이·글자 수는 값을 넣지 않고
+      // notes 로 확인이 필요함을 남긴다. 근거 없는 수치를 넣으면
+      // 디자이너가 잘못된 규격으로 제작하게 된다.
+      // ─────────────────────────────────────────────
+      {
+        name: 'Skippable In-stream (건너뛸 수 있는 인스트림)',
+        aliases: [
+          'Skippable Instream', 'Skippable In-stream', '건너뛸 수 있는 인스트림',
+          '인스트림', 'In-stream', 'Instream', 'TrueView', '트루뷰',
+        ],
+        areas: [
+          { displayOrder: 1, areaName: '동영상 소재 — 가로형', areaType: 'VIDEO', widthPx: 1920, heightPx: 1080, ratio: '16:9', maxFileSizeKb: 256 * 1024 * 1024, formats: ['MPG', 'MP4', 'MOV', 'AVI', 'WMV', 'WebM'], specLabel: '1920 × 1080 px (16:9) 권장 · 최소 1280 × 720 px / 256GB 이하 / 권장 .MPG (MPEG-2 또는 MPEG-4)', notes: '유튜브 채널 업로드 필요 · 오디오 파일(MP3, WAV, PCM)은 지원되지 않음', isUserInput: false },
+          { displayOrder: 2, areaName: '동영상 소재 — 세로형', areaType: 'VIDEO', widthPx: 1080, heightPx: 1920, ratio: '9:16', specLabel: '1080 × 1920 px (9:16) 권장 · 최소 720 × 1280 px', notes: '안전 영역(1080×1920 기준): 상단 288 / 좌측 48 / 우측 192 / 하단 672 px', isUserInput: false },
+          { displayOrder: 3, areaName: '동영상 소재 — 정사각형', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', specLabel: '1080 × 1080 px (1:1) 권장 · 최소 480 × 480 px', isUserInput: false },
+          { displayOrder: 4, areaName: '썸네일', areaType: 'IMAGE', widthPx: 1280, heightPx: 720, ratio: '16:9', maxFileSizeKb: 2048, formats: ['JPG', 'GIF', 'PNG'], specLabel: '1280 × 720 px 권장 (최소 1280 × 640 px) / 16:9 / 2MB 미만', isUserInput: false },
+          { displayOrder: 5, areaName: '컴패니언 배너 (데스크톱 전용)', areaType: 'IMAGE', widthPx: 300, heightPx: 60, maxFileSizeKb: 150, formats: ['JPEG', 'GIF', 'PNG'], specLabel: '300 × 60 px / 150KB 이하', notes: '데스크톱에만 노출된다', isUserInput: false },
+          { displayOrder: 6, areaName: '동영상 URL', areaType: 'URL', specLabel: '광고주 유튜브 채널에 업로드 후 URL 전달', isUserInput: true },
+          { displayOrder: 7, areaName: '최종 도착 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+          { displayOrder: 8, areaName: '광고 제목', areaType: 'TEXT', specLabel: null, notes: '글자 수는 캠페인 유형에 따라 다르다 — 형식별 가이드 확인 필요', isUserInput: true },
+          { displayOrder: 9, areaName: '클릭 유도문안', areaType: 'TEXT', specLabel: null, notes: '글자 수는 캠페인 유형에 따라 다르다 — 형식별 가이드 확인 필요', isUserInput: true },
+          { displayOrder: 10, areaName: '영상 길이', areaType: 'TEXT', specLabel: null, notes: '형식·캠페인 유형에 따라 다르다 — 형식별 가이드 확인 필요', isUserInput: true },
+        ],
+      },
+      {
+        name: 'Non-skippable In-stream (건너뛸 수 없는 인스트림)',
+        aliases: [
+          'Non-skip Instream', 'Non-skippable In-stream', 'Nonskip', 'Non-skip',
+          '건너뛸 수 없는 인스트림', '논스킵', 'NSK',
+        ],
+        areas: [
+          { displayOrder: 1, areaName: '동영상 소재 — 가로형', areaType: 'VIDEO', widthPx: 1920, heightPx: 1080, ratio: '16:9', maxFileSizeKb: 256 * 1024 * 1024, formats: ['MPG', 'MP4', 'MOV', 'AVI', 'WMV', 'WebM'], specLabel: '1920 × 1080 px (16:9) 권장 · 최소 1280 × 720 px / 256GB 이하 / 권장 .MPG (MPEG-2 또는 MPEG-4)', notes: '유튜브 채널 업로드 필요 · 오디오 파일(MP3, WAV, PCM)은 지원되지 않음', isUserInput: false },
+          { displayOrder: 2, areaName: '동영상 소재 — 세로형', areaType: 'VIDEO', widthPx: 1080, heightPx: 1920, ratio: '9:16', specLabel: '1080 × 1920 px (9:16) 권장 · 최소 720 × 1280 px', notes: '안전 영역(1080×1920 기준): 상단 288 / 좌측 48 / 우측 192 / 하단 672 px', isUserInput: false },
+          { displayOrder: 3, areaName: '동영상 소재 — 정사각형', areaType: 'VIDEO', widthPx: 1080, heightPx: 1080, ratio: '1:1', specLabel: '1080 × 1080 px (1:1) 권장 · 최소 480 × 480 px', isUserInput: false },
+          { displayOrder: 4, areaName: '썸네일', areaType: 'IMAGE', widthPx: 1280, heightPx: 720, ratio: '16:9', maxFileSizeKb: 2048, formats: ['JPG', 'GIF', 'PNG'], specLabel: '1280 × 720 px 권장 (최소 1280 × 640 px) / 16:9 / 2MB 미만', isUserInput: false },
+          { displayOrder: 5, areaName: '컴패니언 배너 (데스크톱 전용)', areaType: 'IMAGE', widthPx: 300, heightPx: 60, maxFileSizeKb: 150, formats: ['JPEG', 'GIF', 'PNG'], specLabel: '300 × 60 px / 150KB 이하', notes: '데스크톱에만 노출된다', isUserInput: false },
+          { displayOrder: 6, areaName: '동영상 URL', areaType: 'URL', specLabel: '광고주 유튜브 채널에 업로드 후 URL 전달', isUserInput: true },
+          { displayOrder: 7, areaName: '최종 도착 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+          { displayOrder: 8, areaName: '영상 길이', areaType: 'TEXT', specLabel: null, notes: '건너뛸 수 없는 형식은 길이 상한이 있다 — 집행 국가별 상한을 형식별 가이드에서 확인 필요', isUserInput: true },
+        ],
+      },
+      {
+        name: 'YouTube Shorts (쇼츠)',
+        aliases: ['Shorts', '쇼츠', 'YouTube Shorts', '유튜브 쇼츠', 'Short'],
+        areas: [
+          { displayOrder: 1, areaName: '동영상 소재 — 세로형', areaType: 'VIDEO', widthPx: 1080, heightPx: 1920, ratio: '9:16', maxFileSizeKb: 256 * 1024 * 1024, formats: ['MPG', 'MP4', 'MOV', 'AVI', 'WMV', 'WebM'], specLabel: '1080 × 1920 px (9:16) 권장 · 최소 720 × 1280 px / 256GB 이하 / 권장 .MPG (MPEG-2 또는 MPEG-4)', notes: '안전 영역(1080×1920 기준): 상단 288 / 좌측 48 / 우측 192 / 하단 672 px — 로고·제품·자막 등 핵심 요소를 이 안에 배치', isUserInput: false },
+          { displayOrder: 2, areaName: '썸네일', areaType: 'IMAGE', widthPx: 1280, heightPx: 720, ratio: '16:9', maxFileSizeKb: 2048, formats: ['JPG', 'GIF', 'PNG'], specLabel: '1280 × 720 px 권장 (최소 1280 × 640 px) / 16:9 / 2MB 미만', isUserInput: false },
+          { displayOrder: 3, areaName: '동영상 URL', areaType: 'URL', specLabel: '광고주 유튜브 채널에 업로드 후 URL 전달', isUserInput: true },
+          { displayOrder: 4, areaName: '최종 도착 URL', areaType: 'URL', specLabel: null, isUserInput: true },
+          { displayOrder: 5, areaName: '영상 길이', areaType: 'TEXT', specLabel: null, notes: '쇼츠 길이 상한은 형식별 가이드에서 확인 필요', isUserInput: true },
+        ],
+      },
     ],
   },
 
