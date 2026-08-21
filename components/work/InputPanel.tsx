@@ -1,6 +1,7 @@
 'use client';
 
-import { Check, Image as ImageIcon } from 'lucide-react';
+import { useState } from 'react';
+import { Check, Image as ImageIcon, Loader2, Sparkles } from 'lucide-react';
 import { formatSpec } from '@/lib/spec-db';
 import type { AssetArea } from '@/lib/spec-db';
 import { resolveAsset, type AreaValue, type CampaignMeta } from '@/lib/campaign';
@@ -10,6 +11,9 @@ interface Props {
   areas: AssetArea[];
   values: Record<number, AreaValue>;
   meta: CampaignMeta;
+  /** AI 문구 제안 호출 시 맥락으로 넘긴다 */
+  mediaName: string;
+  productName: string;
   onChange: (order: number, value: string) => void;
   onConfirm: (order: number) => void;
   onUseSubVisual: (order: number) => void;
@@ -19,7 +23,49 @@ interface Props {
  * 캠페인마다 사용자가 채워야 하는 항목들.
  * 시작값은 캠페인 공통 소재를 근거로 제안하고, 사용자가 수정·확정한다.
  */
-export default function InputPanel({ areas, values, meta, onChange, onConfirm, onUseSubVisual }: Props) {
+export default function InputPanel({
+  areas,
+  values,
+  meta,
+  mediaName,
+  productName,
+  onChange,
+  onConfirm,
+  onUseSubVisual,
+}: Props) {
+  const [pending, setPending] = useState<Record<number, boolean>>({});
+  const [suggestErrors, setSuggestErrors] = useState<Record<number, string>>({});
+
+  async function requestSuggestion(a: AssetArea) {
+    setPending((p) => ({ ...p, [a.displayOrder]: true }));
+    setSuggestErrors((e) => ({ ...e, [a.displayOrder]: '' }));
+    try {
+      const res = await fetch('/api/suggest-copy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          brand: meta.brand,
+          mainCopy: meta.mainCopy,
+          mediaName,
+          productName,
+          areaName: a.areaName,
+          specLabel: formatSpec(a),
+          maxChars: a.maxChars,
+        }),
+      });
+      const body = await res.json();
+      if (!res.ok) throw new Error(body.error ?? 'AI 제안에 실패했습니다.');
+      onChange(a.displayOrder, body.suggestion);
+    } catch (e) {
+      setSuggestErrors((prev) => ({
+        ...prev,
+        [a.displayOrder]: e instanceof Error ? e.message : 'AI 제안에 실패했습니다.',
+      }));
+    } finally {
+      setPending((p) => ({ ...p, [a.displayOrder]: false }));
+    }
+  }
+
   if (areas.length === 0) {
     return (
       <div className="px-4 py-5 text-sm" style={{ color: 'var(--text-muted)' }}>
@@ -38,6 +84,13 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
         const showImagePreview = a.areaType === 'IMAGE' && asset;
 
         const canConfirm = isVisual ? !!asset : !!v.value.trim() && !(a.maxChars && v.value.length > a.maxChars);
+
+        // 규칙 기반 제안(suggestInitial)이 못 채운 TEXT 필드에만 AI 제안 버튼을 보여준다.
+        // "못 채웠다"는 비어 있는 경우뿐 아니라, 캠페인 메인 카피를 그대로 복사해 넣었더니
+        // 이 필드의 글자수 제한을 넘어버린 경우도 포함한다 — 규칙이 답을 내놓긴 했지만
+        // 그대로 못 쓰는 값이라 사실상 못 채운 것과 같다.
+        const overLimit = !!a.maxChars && v.value.length > a.maxChars;
+        const canSuggest = a.areaType === 'TEXT' && (!v.value.trim() || overLimit);
 
         return (
           <div
@@ -130,7 +183,29 @@ export default function InputPanel({ areas, values, meta, onChange, onConfirm, o
                 </div>
               )}
 
+              {suggestErrors[a.displayOrder] && (
+                <div className="mt-1 text-[11px]" style={{ color: 'var(--danger)' }}>
+                  {suggestErrors[a.displayOrder]}
+                </div>
+              )}
+
               <div className="mt-3 flex flex-wrap items-center gap-2">
+                {canSuggest && (
+                  <button
+                    type="button"
+                    onClick={() => requestSuggestion(a)}
+                    disabled={!!pending[a.displayOrder]}
+                    className="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] disabled:cursor-wait disabled:opacity-60"
+                    style={{
+                      background: 'var(--accent-muted)',
+                      border: '1px solid var(--accent)',
+                      color: 'var(--accent)',
+                    }}
+                  >
+                    {pending[a.displayOrder] ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                    {pending[a.displayOrder] ? 'AI 생성 중…' : 'AI 제안 받기'}
+                  </button>
+                )}
                 {isVisual && meta.assets.subVisual && (
                   <button
                     type="button"

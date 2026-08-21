@@ -719,6 +719,8 @@ export default function DashboardPage() {
                     areas={userInputAreas(active.entry)}
                     values={active.values}
                     meta={meta}
+                    mediaName={active.entry.mediaName}
+                    productName={active.entry.productName}
                     onChange={handleChange}
                     onConfirm={handleConfirm}
                     onUseSubVisual={handleUseSubVisual}
