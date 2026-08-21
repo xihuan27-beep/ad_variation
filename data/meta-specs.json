@@ -56,6 +56,76 @@
   },
   {
     "format": "carousel",
+    "placement": "facebook-biz-disco-feed",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 32,
+    "description": 18,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 14400,
+    "aspectTolerance": 3,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-facebook-reels",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 40,
+    "maxImageKb": 30720,
+    "minWidth": 500,
+    "minHeight": 262,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-facebook-reels-overlay",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 60,
+    "headline": 10,
+    "maxImageKb": 30720,
+    "minWidth": 600,
+    "minHeight": 600,
+    "cardsMax": 10,
+    "aspectTolerance": 3,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
     "placement": "facebook-feed",
     "objective": "awareness",
     "ratio": "1:1",
@@ -112,6 +182,56 @@
   },
   {
     "format": "carousel",
+    "placement": "facebook-instream-video",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxImageKb": 4194304,
+    "maxVideoKb": 4194304,
+    "cardsMax": 10,
+    "videoDurationSec": 15,
+    "aspectTolerance": 3,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-marketplace",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 20,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 14400,
+    "aspectTolerance": 3,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
     "placement": "facebook-right-hand-column",
     "objective": "awareness",
     "ratio": "1:1",
@@ -127,6 +247,81 @@
       "GIF"
     ],
     "headline": 40,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 14400,
+    "aspectTolerance": 3,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-search",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 20,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 14400,
+    "aspectTolerance": 3,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-story",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxImageKb": 30720,
+    "cardsMin": 3,
+    "cardsMax": 10,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "facebook-video-feeds",
+    "objective": "awareness",
+    "ratio": "1:1",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 80,
+    "headline": 20,
+    "description": 18,
     "maxImageKb": 30720,
     "maxVideoKb": 4194304,
     "cardsMin": 2,
@@ -159,6 +354,33 @@
   },
   {
     "format": "carousel",
+    "placement": "instagram-feed",
+    "objective": "awareness",
+    "ratio": "4:5 / 1:1",
+    "ratioNote": "이미지만 포함된 슬라이드의 경우 4:5 현재 동영상이 포 함된 슬라이드의 경우 1:1만 지원됩니다.",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 120,
+    "aspectTolerance": 1,
+    "landingUrlRequired": true,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
     "placement": "instagram-reels",
     "objective": "awareness",
     "ratio": "9:16",
@@ -173,6 +395,33 @@
     "cardsMax": 10,
     "aspectTolerance": 1,
     "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "carousel",
+    "placement": "instagram-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "JPG",
+      "PNG"
+    ],
+    "videoFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxImageKb": 30720,
+    "maxVideoKb": 4194304,
+    "cardsMin": 2,
+    "cardsMax": 10,
+    "videoDurationSec": 15,
+    "aspectTolerance": 1,
+    "landingUrlRequired": true,
     "instantExperienceRequired": false
   },
   {
@@ -207,7 +456,7 @@
     "format": "collection",
     "placement": "facebook-facebook-reels",
     "objective": "awareness",
-    "ratio": "9:16~1:1",
+    "ratio": "9:16 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -230,7 +479,7 @@
     "format": "collection",
     "placement": "facebook-feed",
     "objective": "awareness",
-    "ratio": "1.91:1~1:1",
+    "ratio": "1.91:1 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -269,7 +518,7 @@
     "format": "collection",
     "placement": "facebook-video-feeds",
     "objective": "awareness",
-    "ratio": "1.91:1~1:1",
+    "ratio": "1.91:1 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -315,7 +564,7 @@
     "format": "collection",
     "placement": "instagram-feed",
     "objective": "awareness",
-    "ratio": "1.91:1~1:1",
+    "ratio": "1.91:1 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -360,7 +609,7 @@
     "format": "collection",
     "placement": "instagram-story",
     "objective": "awareness",
-    "ratio": "1.91:1~1:1",
+    "ratio": "1.91:1 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -404,7 +653,7 @@
     "format": "image",
     "placement": "facebook-instream-video",
     "objective": "awareness",
-    "ratio": "1.91:1~1:1",
+    "ratio": "1.91:1 / 1:1",
     "width": 1080,
     "height": 1080,
     "imageFormats": [
@@ -423,6 +672,48 @@
   },
   {
     "format": "video",
+    "placement": "audience-network-native",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxVideoKb": 4194304,
+    "videoDurationSec": 120,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "audience-network-rewarded-video",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1080,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "description": 30,
+    "maxVideoKb": 4194304,
+    "videoDurationSec": 61,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
     "placement": "facebook-feed",
     "objective": "awareness",
     "ratio": "4:5",
@@ -435,12 +726,178 @@
     ],
     "primaryText": 150,
     "headline": 27,
-    "maxImageKb": 4194304,
+    "maxVideoKb": 4194304,
     "minWidth": 120,
     "minHeight": 120,
     "videoDurationSec": 14460,
     "landingUrlRequired": false,
     "instantExperienceRequired": false,
     "videoSettings": "H.264 compression, square pixels,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-groups-feed",
+    "objective": "awareness",
+    "ratio": "1:1 / 4:5",
+    "variants": [
+      {
+        "ratio": "1:1",
+        "width": 1440,
+        "height": 1440
+      },
+      {
+        "ratio": "4:5",
+        "width": 1440,
+        "height": 1800
+      }
+    ],
+    "ratioNote": "1:1(데스크톱 또는 모바일) 또는 4:5(모바일만) 동영상 설정: H.264 압축, 정사각형 픽셀, 고정 프레임 속도,",
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 150,
+    "headline": 27,
+    "maxVideoKb": 4194304,
+    "minWidth": 120,
+    "minHeight": 120,
+    "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "facebook-right-hand-column",
+    "objective": "awareness",
+    "ratio": "1:1 / 4:5",
+    "variants": [
+      {
+        "ratio": "1:1",
+        "width": 1440,
+        "height": 1440
+      },
+      {
+        "ratio": "4:5",
+        "width": 1440,
+        "height": 1800
+      }
+    ],
+    "ratioNote": "1:1(데스크톱 또는 모바일) 또는 4:5(모바일만) 동영상 설정: H.264 압축, 정사각형 픽셀, 고정 프레임 속도,",
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 150,
+    "headline": 27,
+    "maxVideoKb": 4194304,
+    "minWidth": 120,
+    "minHeight": 120,
+    "videoDurationSec": 14460,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "instagram-explore-home",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "maxVideoKb": 4194304,
+    "minWidth": 250,
+    "videoDurationSec": 3600,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "video",
+    "placement": "instagram-feed",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "maxVideoKb": 4194304,
+    "minWidth": 250,
+    "videoDurationSec": 3600,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
+  },
+  {
+    "format": "video",
+    "placement": "instagram-reels",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "MP4",
+      "MOV"
+    ],
+    "primaryText": 44,
+    "maxVideoKb": 4194304,
+    "videoDurationSec": 900,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "instagram-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1440,
+    "height": 2560,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "maxVideoKb": 4194304,
+    "minWidth": 250,
+    "videoDurationSec": 3600,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false,
+    "videoSettings": "H.264 압축, 정사각형 픽셀, 고정 프레임 속도,"
+  },
+  {
+    "format": "video",
+    "placement": "messenger-story",
+    "objective": "awareness",
+    "ratio": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "imageFormats": [
+      "MP4",
+      "MOV",
+      "GIF"
+    ],
+    "primaryText": 125,
+    "headline": 40,
+    "maxVideoKb": 4194304,
+    "minWidth": 500,
+    "videoDurationSec": 60,
+    "aspectTolerance": 1,
+    "landingUrlRequired": false,
+    "instantExperienceRequired": false
   }
 ]

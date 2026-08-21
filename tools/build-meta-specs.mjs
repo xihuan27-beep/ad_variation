@@ -19,7 +19,10 @@ const PLACEMENT_KO = {
   'facebook-video-feeds': 'Facebook 동영상 피드',
   'facebook-facebook-reels': 'Facebook 릴스',
   'facebook-instream-video': 'Facebook 인스트림 동영상',
+  'facebook-biz-disco-feed': 'Facebook 비즈니스 발견 피드',
+  'facebook-facebook-reels-overlay': 'Facebook 릴스 오버레이',
   'facebook-stories': 'Facebook 스토리',
+  'facebook-story': 'Facebook 스토리',
   'facebook-search': 'Facebook 검색 결과',
   'instagram-feed': 'Instagram 피드',
   'instagram-story': 'Instagram 스토리',
@@ -63,6 +66,9 @@ function areasFor(r) {
 
   const ratio = r.ratio;
   const sizeNote = [
+    // 비율이 조건부인 경우 원문 설명을 그대로 보여준다
+    // (예: 이미지만 있는 슬라이드는 4:5, 동영상이 있으면 1:1만 지원)
+    r.ratioNote ?? '',
     r.minWidth ? `최소 너비 ${r.minWidth}px` : '',
     r.minHeight ? `최소 높이 ${r.minHeight}px` : '',
     r.aspectTolerance ? `화면 비율 허용 범위 ${r.aspectTolerance}%` : '',
@@ -70,50 +76,70 @@ function areasFor(r) {
     .filter(Boolean)
     .join(' / ');
 
+  // 비율별 해상도가 따로 주어지면 그 조합을 각각 만든다
+  const sizes = r.variants?.length
+    ? r.variants
+    : [{ ratio: r.ratio, width: r.width, height: r.height }];
   const dims = r.width && r.height ? `${r.width} × ${r.height} px 이상` : '';
   const isCard = r.format === 'carousel';
   const isCover = r.format === 'collection';
   const label = isCard ? '카드' : isCover ? '커버' : '';
 
   if (r.imageFormats?.length) {
-    push({
-      areaName: `${label}${label ? ' ' : ''}이미지`.trim(),
-      areaType: 'IMAGE',
-      widthPx: r.width,
-      heightPx: r.height,
-      ratio,
-      maxFileSizeKb: r.maxImageKb,
-      formats: r.imageFormats,
-      specLabel: [dims, ratio, r.maxImageKb ? `최대 ${Math.round(r.maxImageKb / 1024)}MB` : '', r.imageFormats.join(', ')]
-        .filter(Boolean)
-        .join(' / '),
-      notes: sizeNote || undefined,
-      isUserInput: false,
-    });
+    for (const v of sizes) {
+      const d = v.width && v.height ? `${v.width} × ${v.height} px 이상` : dims;
+      push({
+        areaName: `${label}${label ? ' ' : ''}이미지${sizes.length > 1 ? ` (${v.ratio})` : ''}`.trim(),
+        areaType: 'IMAGE',
+        widthPx: v.width,
+        heightPx: v.height,
+        ratio: v.ratio ?? ratio,
+        maxFileSizeKb: r.maxImageKb,
+        formats: r.imageFormats,
+        specLabel: [d, v.ratio ?? ratio, r.maxImageKb ? `최대 ${Math.round(r.maxImageKb / 1024)}MB` : '', r.imageFormats.join(', ')]
+          .filter(Boolean)
+          .join(' / '),
+        notes: sizeNote || undefined,
+        isUserInput: false,
+      });
+    }
   }
 
-  if (r.videoFormats?.length) {
+  // 동영상 파일 형식 줄이 빠진 페이지가 있다. 길이나 용량 제한이 적혀 있으면
+  // 동영상을 받는 지면이므로 영역은 만들되, 형식은 비워 두고 확인을 남긴다.
+  const hasVideo = r.videoFormats?.length || r.videoDurationSec || r.maxVideoKb;
+  if (hasVideo) {
+    for (const v of sizes) {
+    const vd = v.width && v.height ? `${v.width} × ${v.height} px 이상` : dims;
     push({
-      areaName: `${label}${label ? ' ' : ''}동영상`.trim(),
+      areaName: `${label}${label ? ' ' : ''}동영상${sizes.length > 1 ? ` (${v.ratio})` : ''}`.trim(),
       areaType: 'VIDEO',
-      widthPx: r.width,
-      heightPx: r.height,
-      ratio,
+      widthPx: v.width,
+      heightPx: v.height,
+      ratio: v.ratio ?? ratio,
       maxDurationSec: r.videoDurationSec,
       maxFileSizeKb: r.maxVideoKb,
       formats: r.videoFormats,
       specLabel: [
-        dims,
-        ratio,
+        vd,
+        v.ratio ?? ratio,
         r.videoDurationSec ? `최대 ${Math.round(r.videoDurationSec / 60)}분` : '',
         r.maxVideoKb ? `최대 ${Math.round(r.maxVideoKb / 1024 / 1024)}GB` : '',
-        r.videoFormats.join(', '),
+        r.videoFormats?.join(', ') ?? '',
       ]
         .filter(Boolean)
         .join(' / '),
-      notes: r.videoSettings || undefined,
+      notes:
+        [
+          r.ratioNote ?? '',
+          r.videoSettings ?? '',
+          r.videoFormats?.length ? '' : '가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요',
+        ]
+          .filter(Boolean)
+          .join(' / ') || undefined,
       isUserInput: false,
     });
+    }
   }
 
   if (r.cardsMax) {
@@ -154,6 +180,24 @@ function serializeArea(a) {
 }
 
 const records = JSON.parse(readFileSync('data/meta-specs.json', 'utf8'));
+
+// 새 게재위치가 들어오면 한글 이름이 없어 슬러그가 그대로 화면에 나온다.
+// 조용히 넘어가면 발견이 늦으므로 생성 단계에서 알린다.
+const unnamed = [...new Set(records.map((r) => r.placement))].filter((p) => !PLACEMENT_KO[p]);
+if (unnamed.length) {
+  console.warn(`⚠ 한글 이름이 없는 게재위치 ${unnamed.length}건 — PLACEMENT_KO 에 추가하세요:`);
+  for (const p of unnamed) console.warn(`    '${p}': '',`);
+}
+
+// 원천 문서 자체에 이상한 값이 실릴 때가 있다 (이미지 상한 4GB 등).
+// 임의로 고치면 원천과 어긋나므로 값은 그대로 두고 사람이 볼 수 있게 알린다.
+for (const r of records) {
+  if (r.maxImageKb && r.maxImageKb > 100 * 1024) {
+    console.warn(
+      `⚠ ${r.format}/${r.placement}: 이미지 최대 크기가 ${Math.round(r.maxImageKb / 1024)}MB 로 이례적입니다. 원문 확인 필요`
+    );
+  }
+}
 
 const products = records.map((r) => {
   const ko = PLACEMENT_KO[r.placement] ?? r.placement;

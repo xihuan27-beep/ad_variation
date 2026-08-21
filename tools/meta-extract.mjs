@@ -75,15 +75,46 @@ export function extract(file) {
   const res =
     t.match(/해상도\s*:\s*(?:최소\s*)?([\d,]+)\s*[x×]\s*([\d,]+)/) ??
     t.match(/Resolution\s*:\s*(?:At least\s*)?([\d,]+)\s*[x×]\s*([\d,]+)/i);
-  const ratioM =
-    t.match(/(?:커버\s*)?비율\s*:\s*([^\n(]+)/) ?? t.match(/Ratio\s*:\s*([^\n(]+)/i);
+  // 비율 칸에 조건이 서술로 적히는 경우가 있다
+  // ("이미지만 포함된 슬라이드의 경우 4:5, 동영상이 포함된 경우 1:1만 지원").
+  // 비율 토큰만 골라 쓰고, 서술이 섞여 있으면 원문을 주석으로 남긴다.
+  const clean = (v) => (v ?? '').replace(/\s*\(\)\s*/g, ' ').replace(/\s+/g, ' ').trim();
+  const tokensOf = (v) => [...new Set(v.match(/\d+(?:\.\d+)?:\d+(?:\.\d+)?/g) ?? [])];
+
+  // 우선 한 줄만 본다. 그 줄에 비율 토큰이 없으면 서술이 다음 줄로 넘어간
+  // 경우이므로 한 줄 더 붙인다. 처음부터 두 줄을 읽으면 뒤따르는
+  // "해상도: ..." 줄까지 딸려 들어와 서술로 오인된다.
+  const oneLine = clean(
+    t.match(/(?:커버\s*)?비율\s*:\s*([^\n]+)/)?.[1] ?? t.match(/Ratio\s*:\s*([^\n]+)/i)?.[1]
+  );
+  const twoLine = clean(t.match(/(?:커버\s*)?비율\s*:\s*([^\n]+\n[^\n]+)/)?.[1]);
+  // 한 줄에 토큰이 없거나, 서술형이라 조건이 다음 줄로 이어지는 경우 두 줄을 쓴다
+  const oneIsProse = /[가-힣]{3,}/.test(oneLine.replace(/\d+(?:\.\d+)?:\d+(?:\.\d+)?/g, ' '));
+  const ratioLine = tokensOf(oneLine).length && !oneIsProse ? oneLine : twoLine || oneLine;
+  const ratioTokens = tokensOf(ratioLine);
+  // 비율 토큰 말고도 설명이 남아 있으면 조건부 규격이다
+  const ratioRest = ratioLine.replace(/\d+(?:\.\d+)?:\d+(?:\.\d+)?/g, ' ');
+  const ratioIsProse = ratioTokens.length > 0 && /[가-힣]{3,}/.test(ratioRest);
+
+  const generic = sizeKb(t, '최대 파일 크기') ?? sizeKb(t, 'Maximum File Size');
+
+  // 비율마다 해상도가 다른 페이지가 있다:
+  //   해상도:
+  //   1:1 비율: 1440x1440픽셀
+  //   4:5 비율: 1440x1800픽셀
+  // 서로 다른 결과물이므로 하나로 뭉치지 않고 각각 남긴다.
+  const variants = [...t.matchAll(/(\d+(?:\.\d+)?:\d+)\s*비율\s*:\s*(\d+)\s*[x×]\s*(\d+)/g)].map(
+    (m) => ({ ratio: m[1], width: Number(m[2]), height: Number(m[3]) })
+  );
 
   return {
     format: path[1],
     placement,
     objective: /인지도|Awareness/i.test(t) ? 'awareness' : /트래픽|Traffic/i.test(t) ? 'traffic' : 'unknown',
 
-    ratio: ratioM ? ratioM[1].trim().replace(/\s+/g, '') : undefined,
+    ratio: ratioTokens.length ? ratioTokens.join(' / ') : ratioLine || undefined,
+    variants: variants.length ? variants : undefined,
+    ratioNote: ratioIsProse ? ratioLine : undefined,
     width: res ? Number(res[1].replace(/,/g, '')) : undefined,
     height: res ? Number(res[2].replace(/,/g, '')) : undefined,
 
@@ -98,12 +129,20 @@ export function extract(file) {
     headline: chars(t, '제목', 'Headline'),
     description: chars(t, '설명', 'Description'),
 
+    // 같은 항목이 "최대 동영상 파일 크기" / "동영상 최대 파일 크기" 로 어순이
+    // 뒤바뀌어 적히는 페이지가 있다. 두 어순을 모두 받는다.
+    // 이미지/동영상을 구분하지 않은 "최대 파일 크기" 는 그 페이지의 형식에 귀속된다.
+    // 형식을 따지지 않으면 동영상 전용 페이지의 용량이 이미지 상한으로 들어간다.
     maxImageKb:
       sizeKb(t, '최대 이미지 파일 크기') ??
+      sizeKb(t, '이미지 최대 파일 크기') ??
       sizeKb(t, 'Image Maximum File Size') ??
-      sizeKb(t, '최대 파일 크기') ??
-      sizeKb(t, 'Maximum File Size'),
-    maxVideoKb: sizeKb(t, '최대 동영상 파일 크기') ?? sizeKb(t, 'Video Maximum File Size'),
+      (path[1] === 'video' ? undefined : generic),
+    maxVideoKb:
+      sizeKb(t, '최대 동영상 파일 크기') ??
+      sizeKb(t, '동영상 최대 파일 크기') ??
+      sizeKb(t, 'Video Maximum File Size') ??
+      (path[1] === 'video' ? generic : undefined),
 
     minWidth:
       num(t, /최소\s*(?:이미지\/동영상\s*)?너비\s*:\s*(\d+)\s*픽셀/) ??
@@ -121,7 +160,9 @@ export function extract(file) {
     cardsMax:
       num(t, /최대 슬라이드 수\s*:\s*(\d+)/) ??
       num(t, /슬라이드 수\s*:\s*\d+\s*[~\-]\s*(\d+)/) ??
-      num(t, /Number of Carousel Cards\s*:\s*\d+\s*(?:to|[~\-])\s*(\d+)/i),
+      num(t, /Number of Carousel Cards\s*:\s*\d+\s*(?:to|[~\-])\s*(\d+)/i) ??
+      // 범위 없이 "슬라이드 수: 10개" 로만 적힌 페이지가 있다 — 상한으로 읽는다
+      num(t, /슬라이드 수\s*:\s*(\d+)\s*개/),
 
     videoDurationSec: durationSec(t),
     aspectTolerance:
