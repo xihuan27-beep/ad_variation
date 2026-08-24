@@ -2,7 +2,15 @@ import PptxGenJS from 'pptxgenjs';
 
 import { fixedSpecAreas, formatSpec, userInputAreas, hasPsdRequirement, parseAreaCount } from './spec-db';
 import type { AssetArea } from './spec-db';
-import { areaSlotKeys, isItemComplete, resolveAsset, suggestedAssetFor, type CampaignMeta, type WorkItem } from './campaign';
+import {
+  areaSlotKeys,
+  isItemComplete,
+  resolveAsset,
+  suggestedAssetFor,
+  type AssetRef,
+  type CampaignMeta,
+  type WorkItem,
+} from './campaign';
 import { resolveDeadline } from './business-days';
 
 /** 실제 제작 산출물이라 흰 배경 기준으로 인쇄·공유하기 좋은 라이트 팔레트를 쓴다 (웹 화면은 다크 유지) */
@@ -196,7 +204,15 @@ function fixedBlockHeight(b: FixedBlock): number {
  * 실제 파일을 심지 않지만, 이미지와 똑같이 규격 비율의 박스를 그려 크기감을 준다.
  * 규격 숫자(2번째 줄)가 실무에서 가장 자주 보는 정보라 글자를 크게 둔다.
  */
-function renderFixedSpecPage(pptx: PptxGenJS, slide: PptxGenJS.Slide, blocks: FixedBlock[], meta: CampaignMeta, isFirstPage: boolean): void {
+function renderFixedSpecPage(
+  pptx: PptxGenJS,
+  slide: PptxGenJS.Slide,
+  blocks: FixedBlock[],
+  meta: CampaignMeta,
+  isFirstPage: boolean,
+  itemIndex: number,
+  overrides: Record<string, AssetRef>
+): void {
   const x = MARGIN;
   const w = 4.55;
   let y = COLUMN_TOP;
@@ -222,7 +238,10 @@ function renderFixedSpecPage(pptx: PptxGenJS, slide: PptxGenJS.Slide, blocks: Fi
   for (const b of blocks) {
     const a = b.area;
     const label = b.slotCount > 1 ? `${a.areaName} #${b.slotIdx + 1}` : a.areaName;
-    const asset = suggestedAssetFor(a, meta);
+    // "집행 예시" 미리보기에서 사용자가 자동 추천을 수동으로 바꿨으면 그 소재를 우선한다 —
+    // 미리보기에서 바꾼 소재가 실제 산출물(PPT)에는 반영 안 되던 문제를 고치는 부분이다.
+    const overrideRef = overrides[`${itemIndex}:${a.displayOrder}`];
+    const asset = overrideRef ? resolveAsset(meta, overrideRef) : suggestedAssetFor(a, meta);
     const boxRatio = effectiveBoxRatio(a);
     const hasBox = boxRatio !== null;
     const rowH = fixedBlockHeight(b);
@@ -388,7 +407,13 @@ function renderConfirmedPage(
   }
 }
 
-function addMediaSlide(pptx: PptxGenJS, item: WorkItem, meta: CampaignMeta): void {
+function addMediaSlide(
+  pptx: PptxGenJS,
+  item: WorkItem,
+  meta: CampaignMeta,
+  itemIndex: number,
+  overrides: Record<string, AssetRef>
+): void {
   if (!item.entry) {
     addUnmatchedSlide(pptx, item);
     return;
@@ -403,7 +428,7 @@ function addMediaSlide(pptx: PptxGenJS, item: WorkItem, meta: CampaignMeta): voi
   for (let p = 0; p < pageCount; p++) {
     const slide = pptx.addSlide();
     addHeader(pptx, slide, item, p > 0);
-    renderFixedSpecPage(pptx, slide, fixedPages[p] ?? [], meta, p === 0);
+    renderFixedSpecPage(pptx, slide, fixedPages[p] ?? [], meta, p === 0, itemIndex, overrides);
     renderConfirmedPage(pptx, slide, confirmedPages[p] ?? [], item, meta, p === 0);
 
     if (p === pageCount - 1 && !isItemComplete(item)) {
@@ -470,14 +495,19 @@ function addSummarySlide(pptx: PptxGenJS, items: WorkItem[]): void {
  * 비율로 크롭될지 바로 확인할 수 있게 하고, 아직 못 고른 이미지·동영상 자리는 빈
  * 박스로 표시해 사람이 바로 작업할 수 있게 한다.
  */
-export async function generateGuidePpt(meta: CampaignMeta, items: WorkItem[]): Promise<Buffer> {
+export async function generateGuidePpt(
+  meta: CampaignMeta,
+  items: WorkItem[],
+  /** "집행 예시" 미리보기에서 사용자가 수동으로 바꾼 소재. key: `${item 인덱스}:${area.displayOrder}` */
+  fixedAssetOverrides: Record<string, AssetRef> = {}
+): Promise<Buffer> {
   const pptx = new PptxGenJS();
   pptx.layout = 'LAYOUT_16x9';
 
   addTitleSlide(pptx, meta, items);
-  for (const item of items) {
-    addMediaSlide(pptx, item, meta);
-  }
+  items.forEach((item, i) => {
+    addMediaSlide(pptx, item, meta, i, fixedAssetOverrides);
+  });
   addSummarySlide(pptx, items);
 
   const buf = await pptx.write({ outputType: 'nodebuffer' });
