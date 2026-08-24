@@ -176,10 +176,14 @@ export default function DashboardPage() {
     setDownloadingPpt(true);
     setPptError(null);
     try {
+      // "선택 안 함/자동 추천"(빈 값)은 보낼 필요 없다 — 실제로 바꾼 것만 넘긴다
+      const fixedAssetOverrides = Object.fromEntries(
+        Object.entries(previewOverrides).filter(([, v]) => v)
+      );
       const res = await fetch('/api/generate-ppt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ meta, items }),
+        body: JSON.stringify({ meta, items, fixedAssetOverrides }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error ?? 'PPT 생성에 실패했습니다.');
@@ -199,7 +203,7 @@ export default function DashboardPage() {
     } finally {
       setDownloadingPpt(false);
     }
-  }, [meta, items]);
+  }, [meta, items, previewOverrides]);
 
   const handleFile = useCallback(async (file: File) => {
     setParsing(true);
