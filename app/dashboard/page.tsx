@@ -30,6 +30,8 @@ import {
   areaSlotKeys,
   isItemComplete,
   progressOf,
+  resolveAsset,
+  selectableAssets,
   suggestedAssetFor,
   suggestInitial,
   type AreaValue,
@@ -40,7 +42,7 @@ import {
 } from '@/lib/campaign';
 import SpecTable from '@/components/work/SpecTable';
 import InputPanel from '@/components/work/InputPanel';
-import RatioBox from '@/components/work/RatioBox';
+import MockupPreview from '@/components/work/MockupPreview';
 
 type Screen = 'upload' | 'work' | 'review';
 
@@ -130,6 +132,10 @@ export default function DashboardPage() {
   const [rows, setRows] = useState<MediaPlanRow[]>([]);
   const [items, setItems] = useState<WorkItem[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
+  // "집행 예시" 미리보기에서만 쓰는 소재 오버라이드 — 자동 추천(suggestedAssetFor)이
+  // 틀렸을 때(예: 로고만 있는 걸로 오인) 사용자가 직접 바꿀 수 있게 한다. 확정값이
+  // 아니라 미리보기 전용이라 WorkItem.values 와는 별도로 둔다. key: `${activeIdx}:${displayOrder}`.
+  const [previewOverrides, setPreviewOverrides] = useState<Record<string, AssetRef | ''>>({});
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
   const [pptError, setPptError] = useState<string | null>(null);
@@ -739,9 +745,12 @@ export default function DashboardPage() {
           <div className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto p-3.5">
             {active?.entry &&
               fixedSpecAreas(active.entry)
-                .filter((a) => a.widthPx && a.heightPx)
+                .filter((a) => (a.widthPx && a.heightPx) || a.ratio)
                 .map((a) => {
-                  const asset = suggestedAssetFor(a, meta);
+                  const overrideKey = `${activeIdx}:${a.displayOrder}`;
+                  const override = previewOverrides[overrideKey];
+                  const asset = override ? resolveAsset(meta, override) : suggestedAssetFor(a, meta);
+                  const assets = selectableAssets(meta);
                   return (
                     <div
                       key={a.displayOrder}
@@ -751,7 +760,32 @@ export default function DashboardPage() {
                       <div className="mb-2 text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
                         {a.areaName}
                       </div>
-                      <RatioBox width={a.widthPx} height={a.heightPx} maxW={180} maxH={120} src={asset?.dataUrl} />
+                      <MockupPreview
+                        width={a.widthPx}
+                        height={a.heightPx}
+                        ratioLabel={a.ratio}
+                        src={a.areaType === 'IMAGE' ? asset?.dataUrl : undefined}
+                        brand={meta.brand}
+                        mainCopy={meta.mainCopy}
+                        ctaText={meta.ctaText}
+                      />
+                      {a.areaType === 'IMAGE' && assets.length > 0 && (
+                        <select
+                          value={override ?? ''}
+                          onChange={(e) =>
+                            setPreviewOverrides((p) => ({ ...p, [overrideKey]: e.target.value as AssetRef }))
+                          }
+                          className="mt-2 w-full rounded-md px-2 py-1 text-[11px]"
+                          style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+                        >
+                          <option value="">자동 추천{asset ? ` (${asset.name})` : ''}</option>
+                          {assets.map((x) => (
+                            <option key={x.ref} value={x.ref}>
+                              이미지 변경: {x.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                       {!asset && a.areaType === 'IMAGE' && (
                         <p className="mt-1.5 text-[11px]" style={{ color: 'var(--text-muted)' }}>
                           업로드된 소재를 이 비율로 크롭한 미리보기입니다 — 소재를 올리면 표시됩니다
