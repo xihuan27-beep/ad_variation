@@ -11,6 +11,15 @@ import { readFileSync, writeFileSync } from 'fs';
 const FORMAT_KO = { image: '이미지', video: '동영상', carousel: '슬라이드', collection: '컬렉션' };
 const OBJECTIVE_KO = { awareness: '인지도', traffic: '트래픽', unknown: '' };
 
+/**
+ * Meta 동영상 소재의 인코딩·오디오 기본 요건 — 거의 모든 게재위치 가이드에 동일하게
+ * 반복되는 표준 문구다. PDF 추출 단계(tools/meta-extract.mjs)가 이 문단까지는 뽑지
+ * 않으므로, 동영상 영역에는 여기서 공통으로 붙여 준다. 게재위치별로 다른 값(최소
+ * 해상도·길이·용량)은 원래대로 r.minWidth/videoDurationSec/maxVideoKb 등에서 가져온다.
+ */
+const META_VIDEO_STANDARD_NOTE =
+  '동영상 설정: H.264 압축 / 정사각형 픽셀 / 고정 프레임 속도 / 프로그레시브 스캔 / 128kbps 이상 스테레오 AAC 오디오 압축. 오디오는 선택 사항이지만 권장.';
+
 const PLACEMENT_KO = {
   'facebook-feed': 'Facebook 피드',
   'facebook-groups-feed': 'Facebook 그룹 피드',
@@ -123,7 +132,7 @@ function areasFor(r) {
       specLabel: [
         vd,
         v.ratio ?? ratio,
-        r.videoDurationSec ? `최대 ${Math.round(r.videoDurationSec / 60)}분` : '',
+        r.videoDurationSec ? `1초 ~ ${Math.round(r.videoDurationSec / 60)}분` : '',
         r.maxVideoKb ? `최대 ${Math.round(r.maxVideoKb / 1024 / 1024)}GB` : '',
         r.videoFormats?.join(', ') ?? '',
       ]
@@ -132,7 +141,10 @@ function areasFor(r) {
       notes:
         [
           r.ratioNote ?? '',
+          r.minWidth ? `최소 너비 ${r.minWidth}px` : '',
+          r.minHeight ? `최소 높이 ${r.minHeight}px` : '',
           r.videoSettings ?? '',
+          META_VIDEO_STANDARD_NOTE,
           r.videoFormats?.length ? '' : '가이드에 동영상 파일 형식이 명시되어 있지 않다 — 확인 필요',
         ]
           .filter(Boolean)
