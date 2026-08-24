@@ -170,10 +170,9 @@ function fixedBlocksOf(areas: AssetArea[]): FixedBlock[] {
   }
   return out;
 }
-function fixedBlockHeight(b: FixedBlock, meta: CampaignMeta): number {
-  const asset = suggestedAssetFor(b.area, meta);
-  const hasThumb = !!asset && !!b.area.widthPx && !!b.area.heightPx;
-  return hasThumb ? 0.95 : 0.5;
+/** 가로·세로 치수가 있으면 이미지든 동영상이든 박스로 그린다 — 실제 소재가 있으면 썸네일, 없으면 빈 박스 */
+function fixedBlockHeight(b: FixedBlock): number {
+  return b.area.widthPx && b.area.heightPx ? 1.25 : 0.75;
 }
 
 /**
@@ -182,7 +181,9 @@ function fixedBlockHeight(b: FixedBlock, meta: CampaignMeta): number {
  * IMAGE 영역은 이 DB에서 압도적으로 isUserInput: false 다 — 매체마다 파일을
  * 새로 고르는 게 아니라, 캠페인이 올린 비주얼(또는 로고)을 그 규격대로
  * 크롭해서 쓰는 구조이기 때문이다. 그래서 실제 소재가 들어갈 자리를 텍스트가
- * 아니라 업로드된 이미지를 그 비율로 크롭한 실제 미리보기로 보여준다.
+ * 아니라 업로드된 이미지를 그 비율로 크롭한 실제 미리보기로 보여준다. 동영상은
+ * 실제 파일을 심지 않지만, 이미지와 똑같이 규격 비율의 박스를 그려 크기감을 준다.
+ * 규격 숫자(2번째 줄)가 실무에서 가장 자주 보는 정보라 글자를 크게 둔다.
  */
 function renderFixedSpecPage(pptx: PptxGenJS, slide: PptxGenJS.Slide, blocks: FixedBlock[], meta: CampaignMeta, isFirstPage: boolean): void {
   const x = MARGIN;
@@ -211,38 +212,53 @@ function renderFixedSpecPage(pptx: PptxGenJS, slide: PptxGenJS.Slide, blocks: Fi
     const a = b.area;
     const label = b.slotCount > 1 ? `${a.areaName} #${b.slotIdx + 1}` : a.areaName;
     const asset = suggestedAssetFor(a, meta);
-    const hasThumb = !!asset && !!a.widthPx && !!a.heightPx;
-    const rowH = hasThumb ? 0.95 : 0.5;
+    const hasBox = !!a.widthPx && !!a.heightPx;
+    const rowH = fixedBlockHeight(b);
 
-    if (hasThumb) {
+    if (hasBox) {
       const ratio = a.widthPx! / a.heightPx!;
-      const boxH = 0.8;
+      const boxH = 1.05;
       const boxW = Math.min(boxH * ratio, 1.6);
-      slide.addImage({ data: asset!.dataUrl, x, y, w: boxW, h: boxH, sizing: { type: 'cover', w: boxW, h: boxH } });
+
+      if (asset) {
+        slide.addImage({ data: asset.dataUrl, x, y, w: boxW, h: boxH, sizing: { type: 'cover', w: boxW, h: boxH } });
+      } else {
+        // 동영상이거나(항상), 이미지인데 매칭되는 비주얼이 없을 때 — 빈 박스로 크기감만 보여준다
+        slide.addShape(pptx.ShapeType.rect, {
+          x, y, w: boxW, h: boxH,
+          fill: { color: COLOR.card },
+          line: { color: COLOR.border, width: 1, dashType: 'dash' },
+        });
+        slide.addText(a.areaType === 'VIDEO' ? '동영상' : '이미지', {
+          x, y, w: boxW, h: boxH,
+          fontSize: 9, color: COLOR.muted, fontFace: FONT, align: 'center', valign: 'middle',
+        });
+      }
+
       slide.addText(
         [
           { text: label, options: { bold: true, color: COLOR.text, breakLine: true } },
-          { text: formatSpec(a), options: { color: COLOR.secondary, fontSize: 8.5 } },
+          { text: formatSpec(a), options: { color: COLOR.secondary, fontSize: 11.5, breakLine: true } },
         ],
         {
           x: x + boxW + 0.12, y, w: w - boxW - 0.12, h: boxH,
-          fontSize: 9.5, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.15,
+          fontSize: 11, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.2,
         }
       );
     } else {
       slide.addText(
         [
           { text: label, options: { bold: true, color: COLOR.text, breakLine: true, bullet: true } },
-          { text: formatSpec(a), options: { color: COLOR.secondary, breakLine: true, indentLevel: 1 } },
+          { text: formatSpec(a), options: { color: COLOR.secondary, breakLine: true, indentLevel: 1, fontSize: 11.5 } },
         ],
         {
           x, y, w, h: rowH,
-          fontSize: 9, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.1,
+          fontSize: 10.5, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.15,
         }
       );
     }
 
-    y += rowH + 0.06;
+    y += rowH + 0.08;
   }
 }
 
@@ -263,7 +279,7 @@ function confirmedBlocksOf(areas: AssetArea[]): ConfirmedBlock[] {
 }
 function confirmedBlockHeight(b: ConfirmedBlock): number {
   const isVisual = b.area.areaType === 'IMAGE' || b.area.areaType === 'VIDEO';
-  return isVisual ? 1.0 : 0.56;
+  return isVisual ? 1.3 : 0.85;
 }
 
 /**
@@ -300,11 +316,11 @@ function renderConfirmedPage(
     const v = item.values[b.key];
     const asset = resolveAsset(meta, v?.assetRef);
     const isVisual = a.areaType === 'IMAGE' || a.areaType === 'VIDEO';
-    const rowH = isVisual ? 1.0 : 0.56;
+    const rowH = confirmedBlockHeight(b);
 
     slide.addText(label, {
       x, y, w: 1.3, h: rowH,
-      fontSize: 9, bold: true, color: COLOR.text, fontFace: FONT, valign: 'top',
+      fontSize: 10.5, bold: true, color: COLOR.text, fontFace: FONT, valign: 'top',
     });
 
     const contentX = x + 1.35;
@@ -312,7 +328,7 @@ function renderConfirmedPage(
 
     if (isVisual) {
       const ratio = a.widthPx && a.heightPx ? a.widthPx / a.heightPx : a.areaType === 'VIDEO' ? 16 / 9 : 1;
-      const boxH = Math.min(0.72, rowH - 0.24);
+      const boxH = Math.min(1.0, rowH - 0.2);
       const boxW = Math.min(boxH * ratio, contentW * 0.5);
 
       if (a.areaType === 'IMAGE' && asset) {
@@ -327,7 +343,7 @@ function renderConfirmedPage(
         });
         slide.addText(a.areaType === 'VIDEO' ? '동영상\n별도 첨부' : '직접 작업\n필요', {
           x: contentX, y, w: boxW, h: boxH,
-          fontSize: 7, color: asset ? COLOR.accent : COLOR.warn, fontFace: FONT, align: 'center', valign: 'middle',
+          fontSize: 9, color: asset ? COLOR.accent : COLOR.warn, fontFace: FONT, align: 'center', valign: 'middle',
         });
       }
 
@@ -335,11 +351,11 @@ function renderConfirmedPage(
       slide.addText(
         [
           { text: nameText, options: { color: asset ? COLOR.secondary : COLOR.warn, breakLine: true } },
-          { text: formatSpec(a), options: { color: COLOR.muted, fontSize: 7.5 } },
+          { text: formatSpec(a), options: { color: COLOR.muted, fontSize: 10.5, breakLine: true } },
         ],
         {
           x: contentX + boxW + 0.1, y, w: contentW - boxW - 0.1, h: boxH,
-          fontSize: 8, fontFace: FONT, valign: 'top', wrap: true,
+          fontSize: 10, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.15,
         }
       );
     } else {
@@ -347,11 +363,11 @@ function renderConfirmedPage(
       slide.addText(
         [
           { text, options: { color: v?.value?.trim() ? COLOR.text : COLOR.warn, breakLine: true } },
-          { text: formatSpec(a), options: { color: COLOR.muted, fontSize: 7.5 } },
+          { text: formatSpec(a), options: { color: COLOR.muted, fontSize: 10.5, breakLine: true } },
         ],
         {
           x: contentX, y, w: contentW, h: rowH,
-          fontSize: 9, fontFace: FONT, valign: 'top', wrap: true,
+          fontSize: 10, fontFace: FONT, valign: 'top', wrap: true, lineSpacingMultiple: 1.15,
         }
       );
     }
@@ -368,7 +384,7 @@ function addMediaSlide(pptx: PptxGenJS, item: WorkItem, meta: CampaignMeta): voi
 
   const fixedBlocks = fixedBlocksOf(fixedSpecAreas(item.entry));
   const confirmedBlocks = confirmedBlocksOf(userInputAreas(item.entry));
-  const fixedPages = paginate(fixedBlocks, (b) => fixedBlockHeight(b, meta), COLUMN_MAX_H);
+  const fixedPages = paginate(fixedBlocks, fixedBlockHeight, COLUMN_MAX_H);
   const confirmedPages = paginate(confirmedBlocks, confirmedBlockHeight, COLUMN_MAX_H);
   const pageCount = Math.max(fixedPages.length, confirmedPages.length, 1);
 

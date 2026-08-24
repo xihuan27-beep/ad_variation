@@ -46,6 +46,7 @@ export default function InputPanel({ areas, values, meta, mediaName, productName
         body: JSON.stringify({
           brand: meta.brand,
           mainCopy: meta.mainCopy,
+          ctaText: meta.ctaText,
           mediaName,
           productName,
           areaName: a.areaName,

@@ -143,7 +143,10 @@ export function pendingAreas(item: WorkItem): AssetArea[] {
   );
 }
 
-const CTA_NAME_RE = /CTA|랜딩\s*버튼|버튼\s*텍스트/i;
+// "행동 유도"/"행동유도"(버튼·문구 등)도 실무에서 흔히 CTA 문구를 가리키는 이름이라 포함한다.
+// 다만 "버튼 텍스트 컬러"·"행동유도문구 색상"처럼 색상 값을 받는 필드까지 잡히면 안 되므로 따로 걸러낸다.
+const CTA_NAME_RE = /CTA|랜딩\s*버튼|버튼\s*텍스트|행동\s*유도|클릭\s*유도/i;
+const CTA_EXCLUDE_RE = /컬러|색상/;
 
 /**
  * 영역별 초기 제안값.
@@ -177,7 +180,7 @@ export function suggestInitial(area: AssetArea, meta: CampaignMeta): { value: st
     }
     case 'TEXT': {
       const name = area.areaName;
-      if (CTA_NAME_RE.test(name)) {
+      if (CTA_NAME_RE.test(name) && !CTA_EXCLUDE_RE.test(name)) {
         if (!meta.ctaText) return { value: '' };
         const options = parseFixedOptions(area.specLabel);
         return { value: options ? closestOption(meta.ctaText, options) : meta.ctaText };
