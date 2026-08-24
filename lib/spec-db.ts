@@ -492,3 +492,60 @@ export function orientLabel(width?: number, height?: number): string {
   if (width === height) return '정사각형';
   return width > height ? '가로형' : '세로형';
 }
+
+/**
+ * specLabel 에서 "N종 중 택1: A / B / C" 형태의 고정 선택지를 뽑는다.
+ * 매체사가 문구를 자유 입력이 아니라 정해진 목록 중에서 고르게 하는 필드(랜딩 버튼 등)에 쓰인다.
+ */
+export function parseFixedOptions(specLabel?: string | null): string[] | undefined {
+  if (!specLabel) return undefined;
+  const m = specLabel.match(/\d+\s*종\s*중\s*택\s*1\s*[:：]\s*(.+)/);
+  if (!m) return undefined;
+  const options = m[1]
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  return options.length > 0 ? options : undefined;
+}
+
+/** query 와 가장 비슷한 옵션을 고른다. 완전 부분일치를 우선하고, 없으면 공백 낱말 겹침 개수로 채점한다. */
+export function closestOption(query: string, options: string[]): string {
+  const q = query.trim().toLowerCase();
+  if (!q) return options[0];
+
+  const contained = options.find((o) => o.toLowerCase().includes(q) || q.includes(o.toLowerCase()));
+  if (contained) return contained;
+
+  const qWords = new Set(q.split(/\s+/).filter(Boolean));
+  let best = options[0];
+  let bestScore = -1;
+  for (const o of options) {
+    const oWords = o.toLowerCase().split(/\s+/).filter(Boolean);
+    const score = oWords.filter((w) => qWords.has(w)).length;
+    if (score > bestScore) {
+      bestScore = score;
+      best = o;
+    }
+  }
+  return best;
+}
+
+/** notes/specLabel 어디든 "PSD" 언급이 있으면 매체사가 제공하는 PSD 템플릿을 참고해야 하는 상품이다 */
+export function hasPsdRequirement(entry: SpecEntry): boolean {
+  return entry.areas.some((a) => /psd/i.test(a.notes ?? '') || /psd/i.test(a.specLabel ?? ''));
+}
+
+/**
+ * specLabel 에서 "최소 N개 등록 필수" / "N개 각각" / "(N종)" 형태의 수량 요건을 읽는다.
+ * 못 찾으면 1(단일 소재)로 본다.
+ */
+export function parseAreaCount(specLabel?: string | null): number {
+  if (!specLabel) return 1;
+  const m =
+    specLabel.match(/최소\s*(\d+)\s*개/) ??
+    specLabel.match(/(\d+)\s*개\s*각각/) ??
+    specLabel.match(/\((\d+)\s*종\)/);
+  if (!m) return 1;
+  const n = Number(m[1]);
+  return Number.isFinite(n) && n > 1 ? n : 1;
+}

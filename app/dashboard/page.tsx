@@ -9,40 +9,63 @@ import {
   Download,
   FileSpreadsheet,
   Loader2,
+  Plus,
   Upload,
   AlertTriangle,
+  X,
 } from 'lucide-react';
 
-import { fixedSpecAreas, userInputAreas, matchSpec, findSpecDiscrepancies, LOW_CONFIDENCE_SCORE } from '@/lib/spec-db';
+import {
+  fixedSpecAreas,
+  userInputAreas,
+  matchSpec,
+  findSpecDiscrepancies,
+  hasPsdRequirement,
+  LOW_CONFIDENCE_SCORE,
+} from '@/lib/spec-db';
 import { extractSpecTokens } from '@/lib/spec-extract';
 import { parseMediaPlan, type MediaPlanRow } from '@/lib/media-plan';
+import { resolveDeadline } from '@/lib/business-days';
 import {
+  areaSlotKeys,
   isItemComplete,
   progressOf,
+  resolveAsset,
+  selectableAssets,
   suggestedAssetFor,
   suggestInitial,
-  type AssetKey,
+  type AreaValue,
+  type AssetRef,
   type CampaignMeta,
-  type UploadedAsset,
+  type VisualAsset,
   type WorkItem,
 } from '@/lib/campaign';
 import SpecTable from '@/components/work/SpecTable';
 import InputPanel from '@/components/work/InputPanel';
-import RatioBox from '@/components/work/RatioBox';
+import MockupPreview from '@/components/work/MockupPreview';
 
 type Screen = 'upload' | 'work' | 'review';
 
 const INITIAL_META: CampaignMeta = {
   brand: 'Diageo JW Blue',
   mainCopy: 'Keep Walking. 더 나아가라',
-  assets: {},
+  landingUrl: '',
+  brandColor: '',
+  ctaText: '',
+  assets: { visuals: [] },
 };
 
-const ASSET_SLOTS: Array<{ key: AssetKey; label: string; required: boolean }> = [
-  { key: 'mainVisual', label: '메인 비주얼', required: true },
-  { key: 'subVisual', label: '2nd 비주얼', required: false },
-  { key: 'logo', label: '브랜드 로고', required: false },
-];
+function AiDisclaimer() {
+  return (
+    <div
+      className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12.5px]"
+      style={{ background: 'var(--warn-muted)', color: 'var(--warn)', border: '1px solid var(--warn)' }}
+    >
+      <AlertTriangle size={14} className="shrink-0" />
+      AI는 실수할 수 있습니다. 반드시 검토하십시오.
+    </div>
+  );
+}
 
 function readAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -62,7 +85,10 @@ function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
 
     if (entry) {
       for (const area of userInputAreas(entry)) {
-        values[area.displayOrder] = { ...suggestInitial(area, meta), confirmed: false };
+        const initial = suggestInitial(area, meta);
+        for (const key of areaSlotKeys(area)) {
+          values[key] = { ...initial, confirmed: false };
+        }
       }
     }
 
@@ -84,11 +110,32 @@ function buildItems(rows: MediaPlanRow[], meta: CampaignMeta): WorkItem[] {
   });
 }
 
+/** 눈에 띄는 마감일 배지 — deadline 이 "N영업일 전" 상대 표현이면 라이브 일정 기준 실제 날짜로 계산해 보여준다 */
+function DeadlineBadge({ deadline, liveSchedule }: { deadline?: string; liveSchedule?: string }) {
+  if (!deadline) return null;
+  const resolved = resolveDeadline(deadline, liveSchedule);
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-semibold"
+      style={{ background: 'var(--danger-muted)', color: 'var(--danger)', border: '1px solid var(--danger)' }}
+      title={resolved.computed ? `엑셀 원문: ${deadline}` : undefined}
+    >
+      <AlertTriangle size={12} />
+      소재 전달 기한 {resolved.display}
+    </span>
+  );
+}
+
 export default function DashboardPage() {
   const [screen, setScreen] = useState<Screen>('upload');
   const [meta, setMeta] = useState<CampaignMeta>(INITIAL_META);
+  const [rows, setRows] = useState<MediaPlanRow[]>([]);
   const [items, setItems] = useState<WorkItem[]>([]);
   const [activeIdx, setActiveIdx] = useState(0);
+  // "집행 예시" 미리보기에서만 쓰는 소재 오버라이드 — 자동 추천(suggestedAssetFor)이
+  // 틀렸을 때(예: 로고만 있는 걸로 오인) 사용자가 직접 바꿀 수 있게 한다. 확정값이
+  // 아니라 미리보기 전용이라 WorkItem.values 와는 별도로 둔다. key: `${activeIdx}:${displayOrder}`.
+  const [previewOverrides, setPreviewOverrides] = useState<Record<string, AssetRef | ''>>({});
   const [parseError, setParseError] = useState<string | null>(null);
   const [parsing, setParsing] = useState(false);
   const [pptError, setPptError] = useState<string | null>(null);
@@ -98,11 +145,28 @@ export default function DashboardPage() {
   const progress = useMemo(() => progressOf(items), [items]);
   const isLast = activeIdx >= items.length - 1;
 
-  const handleAssetUpload = useCallback(async (key: AssetKey, file: File) => {
+  const updateMeta = useCallback(<K extends keyof CampaignMeta>(key: K, value: CampaignMeta[K]) => {
+    setMeta((m) => ({ ...m, [key]: value }));
+  }, []);
+
+  const addVisual = useCallback(async (file: File) => {
     try {
       const dataUrl = await readAsDataUrl(file);
-      const asset: UploadedAsset = { name: file.name, dataUrl };
-      setMeta((m) => ({ ...m, assets: { ...m.assets, [key]: asset } }));
+      const asset: VisualAsset = { id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, name: file.name, dataUrl };
+      setMeta((m) => ({ ...m, assets: { ...m.assets, visuals: [...m.assets.visuals, asset] } }));
+    } catch (e) {
+      setParseError(`소재 파일을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }, []);
+
+  const removeVisual = useCallback((id: string) => {
+    setMeta((m) => ({ ...m, assets: { ...m.assets, visuals: m.assets.visuals.filter((v) => v.id !== id) } }));
+  }, []);
+
+  const uploadLogo = useCallback(async (file: File) => {
+    try {
+      const dataUrl = await readAsDataUrl(file);
+      setMeta((m) => ({ ...m, assets: { ...m.assets, logo: { name: file.name, dataUrl } } }));
     } catch (e) {
       setParseError(`소재 파일을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
     }
@@ -137,30 +201,34 @@ export default function DashboardPage() {
     }
   }, [meta, items]);
 
-  const handleFile = useCallback(
-    async (file: File) => {
-      setParsing(true);
-      setParseError(null);
-      try {
-        const rows = parseMediaPlan(await file.arrayBuffer());
-        if (rows.length === 0) {
-          setParseError(
-            '집행 매체 목록을 찾지 못했습니다. 매체·상품 열이 있는 시트가 포함된 기획 엑셀인지 확인해 주세요.'
-          );
-          return;
-        }
-        setMeta((m) => ({ ...m, fileName: file.name }));
-        setItems(buildItems(rows, meta));
-        setActiveIdx(0);
-        setScreen('work');
-      } catch (e) {
-        setParseError(`엑셀을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
-      } finally {
-        setParsing(false);
+  const handleFile = useCallback(async (file: File) => {
+    setParsing(true);
+    setParseError(null);
+    try {
+      const parsed = parseMediaPlan(await file.arrayBuffer());
+      if (parsed.length === 0) {
+        setParseError(
+          '집행 매체 목록을 찾지 못했습니다. 매체·상품 열이 있는 시트가 포함된 기획 엑셀인지 확인해 주세요.'
+        );
+        return;
       }
-    },
-    [meta]
-  );
+      setMeta((m) => ({ ...m, fileName: file.name }));
+      setRows(parsed);
+    } catch (e) {
+      setParseError(`엑셀을 읽지 못했습니다: ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      setParsing(false);
+    }
+  }, []);
+
+  // 엑셀 파싱과 소재 업로드가 모두 끝난 뒤 사용자가 직접 눌러야 다음 화면으로 넘어간다 —
+  // 엑셀을 올리자마자 자동으로 넘어가면 비주얼·로고를 올릴 틈이 없었다.
+  const canProceed = rows.length > 0 && meta.assets.visuals.length > 0;
+  const proceedToWork = useCallback(() => {
+    setItems(buildItems(rows, meta));
+    setActiveIdx(0);
+    setScreen('work');
+  }, [rows, meta]);
 
   const updateActive = useCallback(
     (fn: (item: WorkItem) => WorkItem) => {
@@ -170,22 +238,22 @@ export default function DashboardPage() {
   );
 
   const handleChange = useCallback(
-    (order: number, value: string) => {
+    (key: string, value: string) => {
       updateActive((it) => ({
         ...it,
         // 값을 고치면 확정을 풀어 다시 확인하게 한다
-        values: { ...it.values, [order]: { value, confirmed: false } },
+        values: { ...it.values, [key]: { ...it.values[key], value, confirmed: false } },
       }));
     },
     [updateActive]
   );
 
   const handleConfirm = useCallback(
-    (order: number) => {
+    (key: string) => {
       updateActive((it) => {
-        const cur = it.values[order];
+        const cur = it.values[key];
         if (!cur) return it;
-        const values = { ...it.values, [order]: { ...cur, confirmed: !cur.confirmed } };
+        const values = { ...it.values, [key]: { ...cur, confirmed: !cur.confirmed } };
         const next = { ...it, values };
         return { ...next, done: isItemComplete(next) };
       });
@@ -193,16 +261,14 @@ export default function DashboardPage() {
     [updateActive]
   );
 
-  const handleUseSubVisual = useCallback(
-    (order: number) => {
-      const sub = meta.assets.subVisual;
-      if (!sub) return;
+  const handleSelectAsset = useCallback(
+    (key: string, ref: AssetRef | undefined, label: string) => {
       updateActive((it) => ({
         ...it,
-        values: { ...it.values, [order]: { value: sub.name, assetRef: 'subVisual', confirmed: false } },
+        values: { ...it.values, [key]: { value: label, assetRef: ref, confirmed: false } },
       }));
     },
-    [meta.assets.subVisual, updateActive]
+    [updateActive]
   );
 
   const goNext = useCallback(() => {
@@ -221,12 +287,78 @@ export default function DashboardPage() {
           className="w-full max-w-xl rounded-xl p-8"
           style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}
         >
+          <div className="mb-5">
+            <AiDisclaimer />
+          </div>
+
           <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
             상세 소재 가이드 생성
           </h1>
           <p className="mt-2 text-sm" style={{ color: 'var(--text-secondary)' }}>
             매체 기획 엑셀과 캠페인 소재를 올리면, 매체별 제작 가이드를 만들어 드립니다.
           </p>
+
+          {/* 캠페인 공통 정보 */}
+          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <label className="flex flex-col gap-1">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                브랜드명
+              </span>
+              <input
+                value={meta.brand}
+                onChange={(e) => updateMeta('brand', e.target.value)}
+                className="rounded-md px-3 py-2 text-sm outline-none"
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                광고주 컬러
+              </span>
+              <input
+                value={meta.brandColor ?? ''}
+                onChange={(e) => updateMeta('brandColor', e.target.value)}
+                placeholder="#000000"
+                className="rounded-md px-3 py-2 text-sm outline-none"
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              />
+            </label>
+            <label className="flex flex-col gap-1 sm:col-span-2">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                메인 카피(키카피)
+              </span>
+              <input
+                value={meta.mainCopy}
+                onChange={(e) => updateMeta('mainCopy', e.target.value)}
+                className="rounded-md px-3 py-2 text-sm outline-none"
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                랜딩 페이지 URL
+              </span>
+              <input
+                value={meta.landingUrl ?? ''}
+                onChange={(e) => updateMeta('landingUrl', e.target.value)}
+                placeholder="https://"
+                className="rounded-md px-3 py-2 text-sm outline-none"
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                CTA 버튼 텍스트
+              </span>
+              <input
+                value={meta.ctaText ?? ''}
+                onChange={(e) => updateMeta('ctaText', e.target.value)}
+                placeholder="예: 더 알아보기"
+                className="rounded-md px-3 py-2 text-sm outline-none"
+                style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              />
+            </label>
+          </div>
 
           <label
             className="mt-6 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-4"
@@ -255,9 +387,12 @@ export default function DashboardPage() {
             </div>
             <span
               className="rounded px-2 py-0.5 text-[11px] font-semibold"
-              style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+              style={{
+                background: rows.length > 0 ? 'var(--success-muted)' : 'var(--danger-muted)',
+                color: rows.length > 0 ? 'var(--success)' : 'var(--danger)',
+              }}
             >
-              필수
+              {rows.length > 0 ? `${rows.length}건 읽음` : '필수'}
             </span>
           </label>
 
@@ -271,73 +406,106 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {ASSET_SLOTS.map((slot) => {
-              const asset = meta.assets[slot.key];
-              return (
-                <label
-                  key={slot.key}
-                  className="flex cursor-pointer flex-col items-center gap-1.5 rounded-lg px-3 py-4"
-                  style={{
-                    background: 'var(--bg-surface)',
-                    border: `1px dashed ${asset ? 'var(--success)' : 'var(--border-strong)'}`,
-                  }}
+          {/* 비주얼 여러 장 업로드 */}
+          <div className="mt-4">
+            <div className="mb-1.5 flex items-center justify-between">
+              <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>
+                비주얼 소재 {meta.assets.visuals.length === 0 && <span style={{ color: 'var(--danger)' }}>· 최소 1개 필수</span>}
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {meta.assets.visuals.map((v) => (
+                <div
+                  key={v.id}
+                  className="relative flex flex-col items-center gap-1 rounded-lg px-2 py-3"
+                  style={{ background: 'var(--bg-surface)', border: '1px solid var(--success)' }}
                 >
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      e.target.value = '';
-                      if (f) void handleAssetUpload(slot.key, f);
-                    }}
-                  />
-                  {asset ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- data URL 미리보기
-                    <img src={asset.dataUrl} alt={asset.name} className="h-10 w-10 rounded object-cover" />
-                  ) : (
-                    <Upload size={16} style={{ color: 'var(--text-muted)' }} />
-                  )}
-                  <div
-                    className="max-w-full truncate text-[13px]"
-                    style={{ color: 'var(--text-primary)' }}
-                    title={asset?.name}
+                  <button
+                    type="button"
+                    onClick={() => removeVisual(v.id)}
+                    className="absolute right-1 top-1 rounded-full p-0.5"
+                    style={{ background: 'var(--bg-elevated)', color: 'var(--text-muted)' }}
+                    aria-label="비주얼 삭제"
                   >
-                    {asset ? asset.name : slot.label}
+                    <X size={12} />
+                  </button>
+                  {/* eslint-disable-next-line @next/next/no-img-element -- data URL 미리보기 */}
+                  <img src={v.dataUrl} alt={v.name} className="h-10 w-10 rounded object-cover" />
+                  <div className="max-w-full truncate text-[11px]" style={{ color: 'var(--text-primary)' }} title={v.name}>
+                    {v.name}
                   </div>
-                  <div
-                    className="text-[11px]"
-                    style={{ color: asset ? 'var(--success)' : slot.required ? 'var(--danger)' : 'var(--text-muted)' }}
-                  >
-                    {asset ? '업로드됨 · 변경하려면 클릭' : slot.required ? '필수' : '선택'}
-                  </div>
-                </label>
-              );
-            })}
+                </div>
+              ))}
+              <label
+                className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-2 py-3"
+                style={{ background: 'var(--bg-surface)', border: '1px dashed var(--border-strong)' }}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = '';
+                    if (f) void addVisual(f);
+                  }}
+                />
+                <Plus size={16} style={{ color: 'var(--accent)' }} />
+                <div className="text-[11px]" style={{ color: 'var(--accent)' }}>
+                  비주얼 추가
+                </div>
+              </label>
+            </div>
           </div>
 
-          <p className="mt-6 text-center text-[12px]" style={{ color: 'var(--text-muted)' }}>
-            엑셀을 선택하면 매체별 가이드 생성이 시작됩니다.
-          </p>
+          {/* 로고 */}
+          <label
+            className="mt-3 flex cursor-pointer items-center gap-3 rounded-lg px-4 py-3"
+            style={{ background: 'var(--bg-surface)', border: `1px dashed ${meta.assets.logo ? 'var(--success)' : 'var(--border-strong)'}` }}
+          >
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                e.target.value = '';
+                if (f) void uploadLogo(f);
+              }}
+            />
+            {meta.assets.logo ? (
+              // eslint-disable-next-line @next/next/no-img-element -- data URL 미리보기
+              <img src={meta.assets.logo.dataUrl} alt={meta.assets.logo.name} className="h-8 w-8 rounded object-cover" />
+            ) : (
+              <Upload size={16} style={{ color: 'var(--text-muted)' }} />
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                브랜드 로고
+              </div>
+              <div className="truncate text-[12px]" style={{ color: 'var(--text-muted)' }}>
+                {meta.assets.logo?.name ?? '선택 — 없으면 로고 영역은 직접 채워야 합니다'}
+              </div>
+            </div>
+          </label>
 
-          {items.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setScreen('work')}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold"
-              style={{ background: 'var(--accent)', color: '#fff' }}
-            >
-              작업 화면으로 돌아가기
-              <ArrowRight size={16} />
-            </button>
+          <button
+            type="button"
+            onClick={proceedToWork}
+            disabled={!canProceed}
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg py-3 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ background: 'var(--accent)', color: '#fff' }}
+          >
+            {items.length > 0 ? '작업 화면으로 돌아가기' : '다음 단계로'}
+            <ArrowRight size={16} />
+          </button>
+          {!canProceed && (
+            <p className="mt-2 text-center text-[12px]" style={{ color: 'var(--text-muted)' }}>
+              엑셀 업로드와 비주얼 소재(최소 1개)를 모두 마쳐야 다음으로 넘어갈 수 있습니다.
+            </p>
           )}
 
-          <Link
-            href="/"
-            className="mt-3 block text-center text-[13px]"
-            style={{ color: 'var(--text-muted)' }}
-          >
+          <Link href="/" className="mt-3 block text-center text-[13px]" style={{ color: 'var(--text-muted)' }}>
             홈으로
           </Link>
         </div>
@@ -385,12 +553,14 @@ export default function DashboardPage() {
                     <div className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                       {it.rawProductName || it.rawMediaName}
                     </div>
-                    <div className="text-[12px]" style={{ color: 'var(--text-muted)' }}>
-                      {it.rawMediaName}
-                      {it.deadline ? ` · ${it.deadline}` : ''}
-                      {it.entry
-                        ? ` · 적용 규격 ${it.entry.productName}${it.matchedBy === 'spec' ? ' (이름이 아닌 규격으로 찾음)' : ''}`
-                        : ' · DB에서 매칭되는 상품을 찾지 못했습니다'}
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px]" style={{ color: 'var(--text-muted)' }}>
+                      <span>{it.rawMediaName}</span>
+                      {it.deadline && <DeadlineBadge deadline={it.deadline} liveSchedule={it.liveSchedule} />}
+                      <span>
+                        {it.entry
+                          ? `적용 규격 ${it.entry.productName}${it.matchedBy === 'spec' ? ' (이름이 아닌 규격으로 찾음)' : ''}`
+                          : 'DB에서 매칭되는 상품을 찾지 못했습니다'}
+                      </span>
                     </div>
                     {it.specDiscrepancies && it.specDiscrepancies.length > 0 && (
                       <div className="mt-0.5 text-[12px]" style={{ color: 'var(--danger)' }}>
@@ -444,6 +614,10 @@ export default function DashboardPage() {
               {downloadingPpt ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
               {downloadingPpt ? '생성 중…' : 'PPT 다운로드'}
             </button>
+          </div>
+
+          <div className="mt-6">
+            <AiDisclaimer />
           </div>
         </div>
       </main>
@@ -530,7 +704,6 @@ export default function DashboardPage() {
                     </span>
                     <span className="block truncate text-[10px]" style={{ color: 'var(--text-muted)' }}>
                       {it.rawMediaName}
-                      {it.deadline ? ` · ${it.deadline}` : ''}
                     </span>
                   </span>
                   {!it.entry && (
@@ -572,9 +745,12 @@ export default function DashboardPage() {
           <div className="flex min-h-0 flex-1 flex-col gap-3.5 overflow-y-auto p-3.5">
             {active?.entry &&
               fixedSpecAreas(active.entry)
-                .filter((a) => a.widthPx && a.heightPx)
+                .filter((a) => (a.widthPx && a.heightPx) || a.ratio)
                 .map((a) => {
-                  const asset = suggestedAssetFor(a, meta);
+                  const overrideKey = `${activeIdx}:${a.displayOrder}`;
+                  const override = previewOverrides[overrideKey];
+                  const asset = override ? resolveAsset(meta, override) : suggestedAssetFor(a, meta);
+                  const assets = selectableAssets(meta);
                   return (
                     <div
                       key={a.displayOrder}
@@ -584,7 +760,32 @@ export default function DashboardPage() {
                       <div className="mb-2 text-[12px] font-medium" style={{ color: 'var(--text-primary)' }}>
                         {a.areaName}
                       </div>
-                      <RatioBox width={a.widthPx} height={a.heightPx} maxW={180} maxH={120} src={asset?.dataUrl} />
+                      <MockupPreview
+                        width={a.widthPx}
+                        height={a.heightPx}
+                        ratioLabel={a.ratio}
+                        src={a.areaType === 'IMAGE' ? asset?.dataUrl : undefined}
+                        brand={meta.brand}
+                        mainCopy={meta.mainCopy}
+                        ctaText={meta.ctaText}
+                      />
+                      {a.areaType === 'IMAGE' && assets.length > 0 && (
+                        <select
+                          value={override ?? ''}
+                          onChange={(e) =>
+                            setPreviewOverrides((p) => ({ ...p, [overrideKey]: e.target.value as AssetRef }))
+                          }
+                          className="mt-2 w-full rounded-md px-2 py-1 text-[11px]"
+                          style={{ background: 'var(--bg-base)', border: '1px solid var(--border)', color: 'var(--text-secondary)' }}
+                        >
+                          <option value="">자동 추천{asset ? ` (${asset.name})` : ''}</option>
+                          {assets.map((x) => (
+                            <option key={x.ref} value={x.ref}>
+                              이미지 변경: {x.label}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                       {!asset && a.areaType === 'IMAGE' && (
                         <p className="mt-1.5 text-[11px]" style={{ color: 'var(--text-muted)' }}>
                           업로드된 소재를 이 비율로 크롭한 미리보기입니다 — 소재를 올리면 표시됩니다
@@ -608,12 +809,12 @@ export default function DashboardPage() {
             <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
               {active?.rawProductName || active?.rawMediaName}
             </h2>
-            <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+            <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[12px]" style={{ color: 'var(--text-secondary)' }}>
               <span>
                 {active?.rawMediaName}
-                {active?.deadline ? ` · 소재 전달 기한 ${active.deadline}` : ''}
                 {active?.liveSchedule ? ` · 라이브 ${active.liveSchedule}` : ''}
               </span>
+              {active?.deadline && <DeadlineBadge deadline={active.deadline} liveSchedule={active.liveSchedule} />}
               {active?.entry && (
                 // 어떤 DB 규격이 적용됐는지 밝힌다 — 엑셀 표기와 다를 수 있다
                 <span
@@ -640,6 +841,15 @@ export default function DashboardPage() {
                   title={`엑셀 표기 "${active.rawMediaName} ${active.rawProductName}" 로 찾은 결과입니다`}
                 >
                   상품 매칭 확인 필요
+                </span>
+              )}
+              {active?.entry && hasPsdRequirement(active.entry) && (
+                <span
+                  className="rounded px-2 py-0.5 text-[11px] font-semibold"
+                  style={{ background: 'var(--danger-muted)', color: 'var(--danger)' }}
+                  title="이 상품은 매체사가 제공하는 PSD 템플릿을 기준으로 제작해야 합니다"
+                >
+                  ⚠ PSD 템플릿 참고 필요
                 </span>
               )}
             </div>
@@ -709,7 +919,7 @@ export default function DashboardPage() {
                       className="rounded px-2 py-0.5 text-[11px] font-semibold"
                       style={{ background: 'var(--warn-muted)', color: 'var(--warn)' }}
                     >
-                      AI 제안
+                      선택·입력
                     </span>
                     <span className="text-[13px] font-medium" style={{ color: 'var(--text-primary)' }}>
                       선택 및 입력 항목
@@ -723,7 +933,7 @@ export default function DashboardPage() {
                     productName={active.entry.productName}
                     onChange={handleChange}
                     onConfirm={handleConfirm}
-                    onUseSubVisual={handleUseSubVisual}
+                    onSelectAsset={handleSelectAsset}
                   />
                 </section>
               </>

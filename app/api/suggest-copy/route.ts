@@ -12,6 +12,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   let body: {
     brand?: string;
     mainCopy?: string;
+    ctaText?: string;
     mediaName?: string;
     productName?: string;
     areaName?: string;
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 });
   }
 
-  const { brand, mainCopy, mediaName, productName, areaName, specLabel, maxChars } = body;
+  const { brand, mainCopy, ctaText, mediaName, productName, areaName, specLabel, maxChars } = body;
   if (!areaName) {
     return NextResponse.json({ error: '입력 항목 정보가 없습니다.' }, { status: 400 });
   }
@@ -52,14 +53,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       output_config: { effort: 'low' },
       system:
         '당신은 디지털 광고 카피라이터입니다. 주어진 브랜드·캠페인 정보와 매체 규격에 맞춰 ' +
-        '광고 소재에 들어갈 문구를 하나만 제안하세요. 따옴표, 설명, 접두어 없이 문구 본문만 ' +
-        `출력하세요. ${limitLine}`,
+        '광고 소재에 들어갈 문구를 하나만 제안하세요. 채울 항목이 CTA·행동 유도 버튼처럼 ' +
+        '클릭을 유도하는 문구이고 "캠페인 CTA 문구"가 주어졌다면, 새로 만들지 말고 그 문구를 ' +
+        '그대로 쓰거나 글자수 제한에 맞게 다듬어서만 쓰세요. 따옴표, 설명, 접두어 없이 문구 ' +
+        `본문만 출력하세요. ${limitLine}`,
       messages: [
         {
           role: 'user',
           content: [
             brand ? `브랜드: ${brand}` : '',
             mainCopy ? `캠페인 메인 카피: ${mainCopy}` : '',
+            ctaText ? `캠페인 CTA 문구(가능하면 이걸 그대로/다듬어서 쓰세요): ${ctaText}` : '',
             mediaName || productName ? `매체: ${[mediaName, productName].filter(Boolean).join(' / ')}` : '',
             `채울 항목: ${areaName}`,
             specLabel ? `항목 규격/제약: ${specLabel}` : '',
