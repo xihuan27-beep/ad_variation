@@ -170,9 +170,20 @@ function fixedBlocksOf(areas: AssetArea[]): FixedBlock[] {
   }
   return out;
 }
-/** 가로·세로 치수가 있으면 이미지든 동영상이든 박스로 그린다 — 실제 소재가 있으면 썸네일, 없으면 빈 박스 */
+/**
+ * 박스를 그릴 때 쓸 가로:세로 비율. widthPx/heightPx가 없어도(예: "16:9"만 있고
+ * 픽셀 치수는 안 적힌 동영상 규격) ratio 문자열에서 뽑아 쓴다 — 그래야 같은
+ * "동영상" 영역인데 어떤 상품은 박스가 뜨고 어떤 상품은 텍스트만 뜨는 일이 없다.
+ */
+function effectiveBoxRatio(a: AssetArea): number | null {
+  if (a.widthPx && a.heightPx) return a.widthPx / a.heightPx;
+  const m = a.ratio?.match(/(\d+(?:\.\d+)?)\s*:\s*(\d+(?:\.\d+)?)/);
+  return m ? Number(m[1]) / Number(m[2]) : null;
+}
+
+/** 비율 정보(치수 또는 ratio 문자열)가 있으면 이미지든 동영상이든 박스로 그린다 */
 function fixedBlockHeight(b: FixedBlock): number {
-  return b.area.widthPx && b.area.heightPx ? 1.25 : 0.75;
+  return effectiveBoxRatio(b.area) !== null ? 1.25 : 0.75;
 }
 
 /**
@@ -212,11 +223,12 @@ function renderFixedSpecPage(pptx: PptxGenJS, slide: PptxGenJS.Slide, blocks: Fi
     const a = b.area;
     const label = b.slotCount > 1 ? `${a.areaName} #${b.slotIdx + 1}` : a.areaName;
     const asset = suggestedAssetFor(a, meta);
-    const hasBox = !!a.widthPx && !!a.heightPx;
+    const boxRatio = effectiveBoxRatio(a);
+    const hasBox = boxRatio !== null;
     const rowH = fixedBlockHeight(b);
 
     if (hasBox) {
-      const ratio = a.widthPx! / a.heightPx!;
+      const ratio = boxRatio!;
       const boxH = 1.05;
       const boxW = Math.min(boxH * ratio, 1.6);
 
@@ -327,7 +339,7 @@ function renderConfirmedPage(
     const contentW = w - 1.35;
 
     if (isVisual) {
-      const ratio = a.widthPx && a.heightPx ? a.widthPx / a.heightPx : a.areaType === 'VIDEO' ? 16 / 9 : 1;
+      const ratio = effectiveBoxRatio(a) ?? (a.areaType === 'VIDEO' ? 16 / 9 : 1);
       const boxH = Math.min(1.0, rowH - 0.2);
       const boxW = Math.min(boxH * ratio, contentW * 0.5);
 
